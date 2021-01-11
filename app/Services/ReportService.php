@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Inventory;
 use App\Models\IssueReport;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -35,19 +36,18 @@ class ReportService
     }
 
 
-    public function getWyebotIssues(): IssueReport
+    public function getWyebotIssues(string $csvFile): IssueReport
     {
         $issueReport = new IssueReport();
 
-        try {
-            $reader = IOFactory::createReader("Xlsx");
-        } catch (Exception $e) {
-            return $issueReport;
-        }
+        $reader = new Csv();
+        $reader->setInputEncoding('CP1252');
+        $reader->setDelimiter(',');
+        $reader->setEnclosure('');
+        $reader->setSheetIndex(0);
 
         if ($reader) {
-            $spreadsheet = $reader->load(storage_path() . '/data/Wyebot Issues.xlsx');
-
+            $spreadsheet = $reader->load(storage_path('data') . '/' . $csvFile);
             $data = $spreadsheet->getActiveSheet()->toArray();
             $issueReport->loadIssues($data);
         }
@@ -55,5 +55,4 @@ class ReportService
 
         return $issueReport;
     }
-
 }
