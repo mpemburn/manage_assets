@@ -1,0 +1,40 @@
+div.report {
+    margin: 2rem;
+    border: 1px solid lightgray
+}
+
+table {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    border-collapse: collapse;
+}
+
+tr {
+    vertical-align: top;
+    border-top: 1px solid gray;
+}
+
+tr.critical {
+    background-color: #d62b27;
+}
+
+tr.major {
+    background-color: #f5822b;
+}
+
+tr.minor {
+    background-color: #febe27;
+}
+
+tr.no-border {
+    border-top: none;
+}
+
+th {
+    padding: 10px;
+    background-color: lightgray;
+}
+
+td {
+    padding: 10px;
+}
