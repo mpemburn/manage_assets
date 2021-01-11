@@ -16,3 +16,5 @@ yarn-error.log
 .DS_Store
 /.idea/php.xml
 /.idea/manage_assets.iml
+/public/js/app.js
+/public/css/app.css
