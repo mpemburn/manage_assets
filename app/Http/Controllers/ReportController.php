@@ -3,20 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Services\ReportService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
-    public function show()
+    public function index()
     {
         $report = new ReportService();
 
-        $issueReport = $report->getWyebotIssues('Issue Detail - The Banner School - AK05000068 - 19700101-0000.csv');
-        $inventory = $report->getInventory();
-//        foreach ($issueReport->getAffectedDevices(2)->toArray() as $key => $device) {
-//            !d($inventory->getDeviceString(key($device)));
-//        }
+        return view('report_files', [
+            'files' => $report->getFileList()
+        ]);
+    }
+
+    public function show(Request $request)
+    {
+        $filename = $request->get('file');
+
+        $report = new ReportService();
+
+        $issueReport = $report->getWyebotIssues($filename);
 
         return view('issue_report', [
+            'filename' => $filename,
             'issueReport' => $issueReport,
             'issues' => $issueReport->getIssues()->toArray(),
             'inventory' => $report->getInventory()

@@ -22,6 +22,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
+Route::get('/reports', ReportController::class . '@index')->name('reports');
 Route::get('/report', ReportController::class . '@show')->name('report');
 
 require __DIR__.'/auth.php';

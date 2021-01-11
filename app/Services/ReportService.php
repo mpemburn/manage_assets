@@ -4,12 +4,24 @@ namespace App\Services;
 
 use App\Models\Inventory;
 use App\Models\IssueReport;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\File;
 
 class ReportService
 {
+    public function getFileList(): array
+    {
+        $path = 'public/data/';
+        $dir = Storage::disk('local')->files($path);
+
+        return collect($dir)->map(static function ($file) use ($path) {
+            return str_replace($path, '', $file);
+        })->sort()->toArray();
+    }
+
     public function getInventory(): Inventory
     {
         $inventory = new Inventory();
@@ -21,7 +33,7 @@ class ReportService
         }
 
         if ($reader) {
-            $spreadsheet = $reader->load(storage_path() . '/data/' . env('BANNER_INVENTORY_XLS'));
+            $spreadsheet = $reader->load(storage_path('/app/private/') . env('BANNER_INVENTORY_XLS'));
 
             $data = $spreadsheet->getActiveSheet()->toArray();
             $inventory->setHeaders(collect($data)->first());
@@ -35,7 +47,6 @@ class ReportService
         return $inventory;
     }
 
-
     public function getWyebotIssues(string $csvFile): IssueReport
     {
         $issueReport = new IssueReport();
@@ -47,7 +58,7 @@ class ReportService
         $reader->setSheetIndex(0);
 
         if ($reader) {
-            $spreadsheet = $reader->load(storage_path('data') . '/' . $csvFile);
+            $spreadsheet = $reader->load(storage_path('app/public/data/') . $csvFile);
             $data = $spreadsheet->getActiveSheet()->toArray();
             $issueReport->loadIssues($data);
         }

@@ -5,6 +5,7 @@
         </h2>
     </x-slot>
     <div class="report">
+        <h1>{!! $filename !!}</h1>
         <table>
             @foreach($issues as $issue)
                 <tr class="{!! $issue[0] !!}">
