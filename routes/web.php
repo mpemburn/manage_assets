@@ -18,12 +18,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
-Route::get('/reports', ReportController::class . '@index')->name('reports');
-Route::get('/report', ReportController::class . '@show')->name('report');
+Route::group(['middlewareGroups' => 'web'], function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+    Route::get('/reports', ReportController::class . '@index')->name('reports');
+    Route::get('/report', ReportController::class . '@show')->name('report');
+});
 
 require __DIR__.'/auth.php';
 
