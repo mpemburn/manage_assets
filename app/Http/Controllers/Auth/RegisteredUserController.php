@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Rules\IsAllowedDomain;
 
 class RegisteredUserController extends Controller
 {
@@ -33,8 +34,8 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'name' => 'required', 'string|max:255',
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email', new IsAllowedDomain()],
             'password' => 'required|string|confirmed|min:8',
         ]);
 
