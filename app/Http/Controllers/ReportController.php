@@ -33,4 +33,8 @@ class ReportController extends Controller
 
     }
 
+    public function upload(Request $request)
+    {
+        return view('upload');
+    }
 }

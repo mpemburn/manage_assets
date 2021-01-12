@@ -24,6 +24,7 @@ Route::group(['middlewareGroups' => 'web'], function () {
     })->name('dashboard');
     Route::get('/reports', ReportController::class . '@index')->name('reports');
     Route::get('/report', ReportController::class . '@show')->name('report');
+    Route::get('/upload', ReportController::class . '@upload')->name('upload');
 });
 
 require __DIR__.'/auth.php';
