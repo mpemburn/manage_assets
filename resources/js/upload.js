@@ -7,9 +7,10 @@ export default class FileUploader {
         this.imageTempl = document.getElementById("image-template");
         this.empty = document.getElementById("empty");
         this.hidden = document.getElementById("hidden-input");
+        this.button = document.getElementById("button");
+        this.submit = document.getElementById("submit");
+        this.cancel = document.getElementById("cancel");
         this.counter = 0;
-        this.hasFiles = ({dataTransfer: {types = []}}) =>
-            types.indexOf("Files") > -1;
         this.addEventListeners();
 
         // use to store selected files
@@ -17,8 +18,8 @@ export default class FileUploader {
     }
 
     addFile(target, file) {
-        const isImage = file.type.match("image.*"),
-            objectURL = URL.createObjectURL(file);
+        const isImage = file.type.match("image.*");
+        const objectURL = URL.createObjectURL(file);
 
         const clone = isImage
             ? this.imageTempl.content.cloneNode(true)
@@ -30,9 +31,9 @@ export default class FileUploader {
         clone.querySelector(".size").textContent =
             file.size > 1024
                 ? file.size > 1048576
-                ? Math.round(file.size / 1048576) + "mb"
-                : Math.round(file.size / 1024) + "kb"
-                : file.size + "b";
+                ? Math.round(file.size / 1048576) + " MB"
+                : Math.round(file.size / 1024) + " KB"
+                : file.size + " bytes";
 
         isImage &&
         Object.assign(clone.querySelector("img"), {
@@ -40,14 +41,19 @@ export default class FileUploader {
             alt: file.name
         });
 
-        empty.classList.add("hidden");
+        this.empty.classList.add("hidden");
         target.prepend(clone);
 
         this.FILES[objectURL] = file;
     }
 
+    hasFiles () {
+        return ({dataTransfer: {types = []}}) => types.indexOf("Files") > -1;
+    }
+
     addEventListeners() {
         let self = this;
+        // Drag and drop events
         this.dropper.addEventListener('drop', function (evt) {
             evt.preventDefault();
             for (const file of evt.dataTransfer.files) {
@@ -71,6 +77,7 @@ export default class FileUploader {
         this.dropper.addEventListener('dragleave', function (e) {
             1 > --self.counter && self.overlay.classList.remove("draggedover");
         });
+
         // event delegation to caputre delete events
         // fron the waste buckets in the file preview cards
         this.gallery.onclick = ({target}) => {
@@ -83,19 +90,23 @@ export default class FileUploader {
                 delete self.FILES[ou];
             }
         };
-        document.getElementById("button").onclick = () => this.hidden.click();
+
         this.hidden.onchange = (evt) => {
             for (const file of evt.target.files) {
                 self.addFile(self.gallery, file);
             }
         };
+
+        this.button.onclick = () => this.hidden.click();
+
         // print all selected files
-        document.getElementById("submit").onclick = () => {
+        this.submit.onclick = () => {
             alert(`Submitted Files:\n${JSON.stringify(self.FILES)}`);
             console.log(self.FILES);
         };
+
         // clear entire selection
-        document.getElementById("cancel").onclick = () => {
+        this.cancel.onclick = () => {
             while (self.gallery.children.length > 0) {
                 self.gallery.lastChild.remove();
             }
