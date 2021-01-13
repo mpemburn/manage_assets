@@ -10,6 +10,7 @@ export default class FileUploader {
         this.button = document.getElementById("button");
         this.submit = document.getElementById("submit");
         this.cancel = document.getElementById("cancel");
+        this.xhr = new XMLHttpRequest();
         this.counter = 0;
         this.addEventListeners();
 
@@ -99,13 +100,20 @@ export default class FileUploader {
 
         this.button.onclick = () => this.hidden.click();
 
-        // print all selected files
+        // Submit all selected files
         this.submit.onclick = () => {
-            alert(`Submitted Files:\n${JSON.stringify(self.FILES)}`);
-            console.log(self.FILES);
+            let formData = new FormData();
+            for (let key in self.FILES) {
+                if (self.FILES.hasOwnProperty(key)) {
+                    formData.append('uploads[]', self.FILES[key]);
+                }
+            }
+            self.xhr.open("POST", "/api/receive_files", true);
+            self.xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+            self.xhr.send(formData);
         };
 
-        // clear entire selection
+        // Clear entire selection
         this.cancel.onclick = () => {
             while (self.gallery.children.length > 0) {
                 self.gallery.lastChild.remove();
@@ -114,6 +122,14 @@ export default class FileUploader {
             self.empty.classList.remove("hidden");
             self.gallery.append(self.empty);
         };
+
+        this.xhr.addEventListener('loadend', function (evt) {
+            //alert('Nothing succeeds like success!');
+        });
+
+        this.xhr.addEventListener('error', function (evt) {
+
+        });
     }
 }
 

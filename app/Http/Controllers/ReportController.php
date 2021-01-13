@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\ReportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\FileBag;
 
 class ReportController extends Controller
 {
@@ -33,8 +35,21 @@ class ReportController extends Controller
 
     }
 
-    public function upload(Request $request)
+    public function upload()
     {
         return view('upload');
+    }
+
+    public function receive(Request $request): void
+    {
+        if ($request->hasFile('uploads')) {
+            foreach ($request->uploads as $file) {
+                $uploadFileName = $file->getClientOriginalName();
+                // Upload file to public path in storage directory
+                $file->move(storage_path('app/public/data'), $uploadFileName);
+            }
+        }
+//        collect($request->allFiles())->each(static function ($file) {
+//        });
     }
 }
