@@ -26,13 +26,16 @@ class ReportController extends Controller
 
         $issueReport = $report->getWyebotIssues($filename);
 
-        return view('issue_report', [
-            'filename' => $filename,
-            'issueReport' => $issueReport,
-            'issues' => $issueReport->getIssues()->toArray(),
-            'inventory' => $report->getInventory()
-        ]);
+        if ($issueReport->hasValidIssueData()) {
+            return view('issue_report', [
+                'filename' => $filename,
+                'issueReport' => $issueReport,
+                'issues' => $issueReport->getIssues()->toArray(),
+                'inventory' => $report->getInventory()
+            ]);
+        }
 
+        return view('invalid_data');
     }
 
     public function upload()
@@ -42,14 +45,10 @@ class ReportController extends Controller
 
     public function receive(Request $request): void
     {
-        if ($request->hasFile('uploads')) {
-            foreach ($request->uploads as $file) {
-                $uploadFileName = $file->getClientOriginalName();
-                // Upload file to public path in storage directory
-                $file->move(storage_path('app/public/data'), $uploadFileName);
-            }
-        }
-//        collect($request->allFiles())->each(static function ($file) {
-//        });
+        collect($request->uploads)->each(static function ($file) {
+            $uploadFileName = $file->getClientOriginalName();
+            // Upload file to public path in storage directory
+            $file->move(storage_path('app/public/data'), $uploadFileName);
+        });
     }
 }

@@ -58,9 +58,14 @@ class ReportService
         $reader->setSheetIndex(0);
 
         if ($reader) {
-            $spreadsheet = $reader->load(storage_path('app/public/data/') . $csvFile);
-            $data = $spreadsheet->getActiveSheet()->toArray();
-            $issueReport->loadIssues($data);
+            $spreadsheet = null;
+            try {
+                $spreadsheet = $reader->load(storage_path('app/public/data/') . $csvFile);
+                $data = $spreadsheet->getActiveSheet()->toArray();
+                $issueReport->loadIssues($data);
+            } catch (Exception $e) {
+                return $issueReport;
+            }
         }
 
 

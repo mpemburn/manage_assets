@@ -6,24 +6,45 @@ use Illuminate\Support\Collection;
 
 class IssueReport
 {
+    public const VALID_ISSUE_HEADER = ['Severity', 'Problem', 'Problem Description', 'Solution'];
+
     public Collection $issues;
     public Collection $affectDevices;
 
+
     public function __construct()
     {
+        $this->issues = collect();
         $this->affectDevices = collect();
     }
 
     public function loadIssues(array $issues): void
     {
-        $index = 0;
-        $this->issues = collect($issues)->map(function ($issue) use (&$index) {
-            $this->setAffectedDevices($issue[2], $index);
-            $issue[2] = $index;
-            $index++;
+        $headerSet = false;
+        $this->issues = collect($issues)->map(function ($issue) use (&$headerSet) {
+            // Set a unique id string to get the devices when the report is generated
+            $uid = uniqid('', true);
+            $this->setAffectedDevices($issue[2], $uid);
+            if ($headerSet) {
+                $issue[2] = $uid;
+            }
+
+            $headerSet = true;
 
             return $issue;
         });
+    }
+
+    public function hasValidIssueData(): bool
+    {
+        if ($this->issues->isEmpty()) {
+            return false;
+        }
+
+        $valid = collect(self::VALID_ISSUE_HEADER);
+        $header = collect($this->issues->first());
+
+        return $valid->diff($header)->isEmpty();
     }
 
     public function getIssues(): Collection
@@ -36,19 +57,19 @@ class IssueReport
         return $this->affectDevices;
     }
 
-    public function getAffectedDevices(int $index): Collection
+    public function getAffectedDevices(string $index): Collection
     {
         return $this->affectDevices->pull($index);
     }
 
-    public function hasAffectedDevices(int $index): bool
+    public function hasAffectedDevices(string $index): bool
     {
         return $this->affectDevices->contains(function ($value, $key) use ($index) {
             return $key === $index;
         });
     }
 
-    protected function setAffectedDevices(string $deviceString, int $index): void
+    protected function setAffectedDevices(string $deviceString, string $index): void
     {
         $devices = collect(explode("\n", $deviceString))
             ->map(function ($device, $key) {

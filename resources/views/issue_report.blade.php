@@ -19,7 +19,7 @@
                         <td>{!! $issue[3] !!}</td>
                     @endif
                 </tr>
-                @if($issueReport->hasAffectedDevices($issue[2]))
+                @if(! $loop->first)
                     <tr>
                         <td colspan="3">
                             <table>
