@@ -130,6 +130,8 @@ export default class FileUploader {
 
         this.xhr.addEventListener('loadend', function (evt) {
             self.modal.toggleModal();
+
+            document.location.reload();
         });
 
         this.xhr.addEventListener('error', function (evt) {

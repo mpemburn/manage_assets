@@ -59,7 +59,7 @@ class IssueReport
 
     public function getAffectedDevices(string $index): Collection
     {
-        return $this->affectDevices->has($index) 
+        return $this->affectDevices->has($index)
             ? $this->affectDevices->pull($index)
             : collect();
     }
