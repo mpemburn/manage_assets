@@ -1,5 +1,6 @@
+import Modal from "./modal";
 export default class FileUploader {
-    constructor() {
+    constructor(options) {
         this.dropper = document.getElementById("dropper");
         this.gallery = document.getElementById("gallery");
         this.overlay = document.getElementById("overlay");
@@ -12,6 +13,9 @@ export default class FileUploader {
         this.cancel = document.getElementById("cancel");
         this.xhr = new XMLHttpRequest();
         this.counter = 0;
+        // Modal is added in app.js
+        this.modal = options.modal;
+
         this.addEventListeners();
 
         // use to store selected files
@@ -121,10 +125,11 @@ export default class FileUploader {
             self.FILES = {};
             self.empty.classList.remove("hidden");
             self.gallery.append(self.empty);
+            self.modal.toggleModal();
         };
 
         this.xhr.addEventListener('loadend', function (evt) {
-            //alert('Nothing succeeds like success!');
+            self.modal.toggleModal();
         });
 
         this.xhr.addEventListener('error', function (evt) {

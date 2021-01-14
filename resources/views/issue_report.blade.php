@@ -14,7 +14,7 @@
                         <th>{!! $issue[1] !!}</th>
                         <th>{!! $issue[3] !!}</th>
                     @else
-                        <td>{!! $issue[0] !!}</td>
+                        <td class="to-upper">{!! $issue[0] !!}</td>
                         <td>{!! $issue[1] !!}</td>
                         <td>{!! $issue[3] !!}</td>
                     @endif

@@ -39,3 +39,12 @@ th {
 td {
     padding: 10px;
 }
+
+td.to-upper {
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+div.controls {
+    margin: 10px;
+}
