@@ -59,7 +59,9 @@ class IssueReport
 
     public function getAffectedDevices(string $index): Collection
     {
-        return $this->affectDevices->pull($index);
+        return $this->affectDevices->has($index) 
+            ? $this->affectDevices->pull($index)
+            : collect();
     }
 
     public function hasAffectedDevices(string $index): bool
