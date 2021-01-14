@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ReportService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\FileBag;
@@ -47,6 +48,10 @@ class ReportController extends Controller
     {
         collect($request->uploads)->each(static function ($file) {
             $uploadFileName = $file->getClientOriginalName();
+            $ext = $file->getClientOriginalExtension();
+            $timeNow = Carbon::now()->format('Y-m-d-H-i-s');
+
+            $uploadFileName = str_replace('.' . $ext, '-' . $timeNow . '.' . $ext, $uploadFileName);
             // Upload file to public path in storage directory
             $file->move(storage_path('app/public/data'), $uploadFileName);
         });
