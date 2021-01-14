@@ -29,6 +29,9 @@ class IssueReport
                 $issue[2] = $uid;
             }
 
+            // "Solutions has some bogus line feeds.  Replace.
+            $issue[3] = str_replace('\n', '', $issue[3]);
+
             $headerSet = true;
 
             return $issue;
