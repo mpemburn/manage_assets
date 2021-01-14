@@ -1,0 +1,28 @@
+# ansible-playbook -i ./hosts -e env=sandbox deploy.yml
+- hosts: "{{ env }}"
+  become: yes
+  become_user: root
+  gather_facts: false
+  vars:
+    ansible_user: ubuntu
+    project_dir: /var/www/assets
+
+  tasks:
+    - name: Pull origin master
+      git:
+        repo: https://github.com/mpemburn/manage_assets.git
+        dest: "{{ project_dir }}"
+        update: yes
+        force: yes
+        version: master
+
+    - name: Composer install
+      shell: composer install -vvv
+      args:
+        chdir: "{{ project_dir }}"
+
+    - name: Run migrations
+      shell: php artisan migrate
+      args:
+        chdir: "{{ project_dir }}"
+

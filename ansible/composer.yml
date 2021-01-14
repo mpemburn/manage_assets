@@ -1,0 +1,25 @@
+- hosts: "{{ env }}"
+  become: yes
+  become_user: root
+  vars:
+    ansible_user: ubuntu
+
+  tasks:
+    - name: Download composer
+      get_url:
+        url: https://getcomposer.org/download/1.10.17/composer.phar
+        dest: /tmp
+      tags: composer
+
+    - name: Rename composer.phar to composer
+      shell: mv /tmp/composer.phar /usr/local/bin/composer
+      args:
+        creates: /usr/local/bin/composer
+      tags: composer
+
+    - name: Make composer executable
+      file:
+        path: /usr/local/bin/composer
+        mode: a+x
+        state: file
+      tags: composer

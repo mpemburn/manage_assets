@@ -1,0 +1,7 @@
+- import_playbook: nginx.yml
+- import_playbook: php.yml
+- import_playbook: packages.yml
+- import_playbook: composer.yml
+- import_playbook: clone.yml
+- import_playbook: env.yml
+#- import_playbook: passport.yml

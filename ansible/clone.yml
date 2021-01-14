@@ -1,0 +1,47 @@
+- hosts: "{{ env }}"
+  become: yes
+  become_user: root
+  gather_facts: false
+  vars:
+    ansible_user: ubuntu
+    group: www-data
+    project_dir: /var/www/assets
+
+  tasks:
+    - name: Clone Asset Manager into project directory
+      git:
+        repo: https://github.com/mpemburn/manage_assets.git
+        version: master
+        dest: "{{ project_dir }}"
+
+    - name: Create composer vendor directory
+      file:
+        path: "{{ project_dir }}/vendor"
+        owner: "{{ ansible_user }}"
+        group: "{{ group }}"
+        mode: 0775
+        state: directory
+
+    - name: Set permissions on storage directory
+      file:
+        path: "{{ project_dir }}/storage"
+        owner: "{{ ansible_user }}"
+        group: "{{ group }}"
+        mode: 0775
+        recurse: yes
+        state: directory
+
+    - name: Set permissions on storage/logs directory
+      file:
+        path: "{{ project_dir }}/storage/logs"
+        owner: "{{ ansible_user }}"
+        group: "{{ group }}"
+        mode: 0775
+        recurse: yes
+        state: directory
+
+    - name: Composer install
+      shell: composer install -vvv
+      args:
+        chdir: "{{ project_dir }}"
+

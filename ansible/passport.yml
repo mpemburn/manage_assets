@@ -1,0 +1,14 @@
+- hosts: "{{ env }}"
+  become: yes
+  become_user: root
+  gather_facts: false
+  vars:
+    ansible_user: ubuntu
+    group: www-data
+    project_dir: /var/www/assets
+
+  tasks:
+    - name: Install Passport (to generate keys)
+      shell: php artisan passport:install
+      args:
+        chdir: "{{ project_dir }}"

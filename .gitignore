@@ -18,3 +18,5 @@ yarn-error.log
 /.idea/manage_assets.iml
 /public/js/app.js
 /public/css/app.css
+/production.env
+/prodenv.v

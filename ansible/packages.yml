@@ -1,0 +1,16 @@
+- hosts: "{{ env }}"
+  become: yes
+  become_user: root
+  gather_facts: false
+  vars:
+    ansible_user: ubuntu
+
+  tasks:
+    - name: Install Packages
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - mariadb-server
+          - ccrypt
+          - unzip

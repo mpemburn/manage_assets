@@ -1,0 +1,46 @@
+- hosts: "{{ env }}"
+  become: yes
+  become_user: root
+  gather_facts: false
+  vars:
+    ansible_user: ubuntu
+    site_name: assets
+    nginx_path: /etc/nginx
+    nginx_sites_available: "{{ nginx_path }}/sites-available"
+    nginx_sites_enabled: "{{ nginx_path }}/sites-enabled"
+
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Remove default config
+      file:
+        path: "{{ nginx_sites_available }}/default"
+        state: absent
+
+    - name: Remove default sybolic link for default
+      file:
+        path: "{{ nginx_sites_enabled }}/default"
+        state: absent
+
+    - name: Setup Nginx vhost
+      template:
+        src: "./templates/{{ site_name }}.conf"
+        dest: "{{ nginx_sites_available }}/{{ site_name }}.org"
+
+    - name: Create Symbolic Link
+      file:
+        src: "{{ nginx_sites_available }}/{{ site_name }}.org"
+        dest: "{{ nginx_sites_enabled }}/{{ site_name }}.org"
+        state: link
+      notify:
+        - Restart Nginx
+  # Run sudo service nginx restart
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
