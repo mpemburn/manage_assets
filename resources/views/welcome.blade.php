@@ -36,8 +36,8 @@
                 </div>
             @endif
 
-            <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-                <h1>Welcome to the Banner School Asset Manager</h1>
+            <div class="max-w-6xl mx-auto sm:px-6 lg:px-8" style="border: 1px solid lightgray;">
+                <h1>Welcome to the Banner School Issue Manager</h1>
                 <h2><a>If you do not already have an account please <a href="/register" style="text-decoration: underline">Register</a> now.</h2>
                 <h2>Otherwise, please <a href="/login" style="text-decoration: underline">Log in</a></h2>
             </div>
