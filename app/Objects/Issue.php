@@ -14,16 +14,17 @@ class Issue
 
     public function __construct(array $issue, bool $isHeader = false)
     {
-        $this->severity = $issue[0];
-        $this->problem = $issue[1];
-        $this->description = $issue[2];
+        $this->severity = $issue[0] ?? '';
+        $this->problem = $issue[1] ?? '';
+        $this->description = $issue[2] ?? '';
+        $solution = $issue[3] ?? '';
         if ($isHeader) {
-            $this->solution = $issue[3];
+            $this->solution = $solution;
         } else {
             // Set a unique id string to get the devices when the report is generated
             $this->uid = uniqid('', true);
             // "Solutions" has some bogus line feeds.  Replace these.
-            $this->solution = str_replace('\n', '', $issue[3]);
+            $this->solution = str_replace('\n', '', $solution);
         }
 
     }
