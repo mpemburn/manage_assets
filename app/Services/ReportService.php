@@ -2,13 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\Inventory;
-use App\Models\IssueReport;
+use App\Objects\Inventory;
+use App\Objects\IssueReport;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Shared\File;
 
 class ReportService
 {

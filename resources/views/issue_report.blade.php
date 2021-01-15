@@ -5,25 +5,25 @@
         </h2>
     </x-slot>
     <div class="report">
-        <h1>{!! $filename !!}</h1>
+        <div class="m-3 text-lg font-bold text-center">{!! $filename !!}</div>
         <table>
             @foreach($issues as $issue)
-                <tr class="{!! $issue[0] !!}">
+                <tr class="{!! $issue->severity !!}">
                     @if($loop->first)
-                        <th>{!! $issue[0] !!}</th>
-                        <th>{!! $issue[1] !!}</th>
-                        <th>{!! $issue[3] !!}</th>
+                        <th>{!! $issue->severity !!}</th>
+                        <th>{!! $issue->problem !!}</th>
+                        <th>{!! $issue->solution !!}</th>
                     @else
-                        <td class="to-upper">{!! $issue[0] !!}</td>
-                        <td>{!! $issue[1] !!}</td>
-                        <td>{!! $issue[3] !!}</td>
+                        <td class="to-upper">{!! $issue->severity !!}</td>
+                        <td>{!! $issue->problem !!}</td>
+                        <td>{!! $issue->solution !!}</td>
                     @endif
                 </tr>
                 @if(! $loop->first)
                     <tr>
                         <td colspan="3">
                             <table>
-                                @foreach($issueReport->getAffectedDevices($issue[2])->toArray() as $device)
+                                @foreach($issueReport->getAffectedDevices($issue->uid)->toArray() as $device)
                                     <tr>
                                         <td style="padding-left: 30px;">
                                             {!! current($device) !!}

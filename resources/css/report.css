@@ -16,15 +16,15 @@ tr {
 }
 
 tr.critical {
-    background-color: #d62b27;
+    background-color: rgba(214, 43, 39, 0.75);
 }
 
 tr.major {
-    background-color: #f5822b;
+    background-color: rgba(245, 130, 43, 0.75);
 }
 
 tr.minor {
-    background-color: #febe27;
+    background-color: rgba(254, 190, 39, 0.75);
 }
 
 tr.no-border {

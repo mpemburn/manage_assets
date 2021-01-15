@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Objects;
 
 use Illuminate\Support\Collection;
 
@@ -21,16 +21,13 @@ class IssueReport
     public function loadIssues(array $issues): void
     {
         $headerSet = false;
-        $this->issues = collect($issues)->map(function ($issue) use (&$headerSet) {
-            // Set a unique id string to get the devices when the report is generated
-            $uid = uniqid('', true);
-            $this->setAffectedDevices($issue[2], $uid);
+        $this->issues = collect($issues)->map(function ($issueArray) use (&$headerSet) {
             if ($headerSet) {
-                $issue[2] = $uid;
+                $issue = new Issue($issueArray);
+                $this->setAffectedDevices($issue->description, $issue->uid);
+            } else {
+                $issue = new Issue($issueArray, true);
             }
-
-            // "Solutions has some bogus line feeds.  Replace.
-            $issue[3] = str_replace('\n', '', $issue[3]);
 
             $headerSet = true;
 
