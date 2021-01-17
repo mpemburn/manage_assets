@@ -11,7 +11,7 @@ class CreateInventoryTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('inventory', function (Blueprint $table) {
             $table->id();
@@ -49,7 +49,7 @@ class CreateInventoryTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('inventory');
     }
