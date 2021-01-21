@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 class IssueReport
 {
     public const VALID_ISSUE_HEADER = ['Severity', 'Problem', 'Problem Description', 'Solution'];
+    public const MAC_ADDRESS_PATTERN = '/[\w]{2}:[\w]{2}:[\w]{2}:[\w]{2}:[\w]{2}:[\w]{2}/';
 
     public Collection $issues;
     public Collection $affectDevices;
@@ -57,34 +58,39 @@ class IssueReport
         return $this->affectDevices;
     }
 
-    public function getAffectedDevices(string $index): Collection
+    public function getAffectedDevices(string $uid): Collection
     {
-        return $this->affectDevices->has($index)
-            ? $this->affectDevices->pull($index)
+        return $this->affectDevices->has($uid)
+            ? $this->affectDevices->pull($uid)
             : collect();
     }
 
-    public function hasAffectedDevices(string $index): bool
+    public function hasAffectedDevices(string $uid): bool
     {
-        return $this->affectDevices->contains(function ($value, $key) use ($index) {
-            return $key === $index;
+        return $this->affectDevices->contains(function ($value, $key) use ($uid) {
+            return $key === $uid;
         });
     }
 
-    protected function setAffectedDevices(string $deviceString, string $index): void
+    protected function setAffectedDevices(string $deviceString, string $uid): void
     {
         $devices = collect(explode("\n", $deviceString))
-            ->map(function ($device, $key) {
-                preg_match('/[\w]{2}:[\w]{2}:[\w]{2}:[\w]{2}:[\w]{2}:[\w]{2}/', $device, $matches);
+            ->map(function ($device, $key) use ($uid) {
+                preg_match(self::MAC_ADDRESS_PATTERN, $device, $matches);
                 $macAddress = $matches ? $matches[0] : null;
                 if ($macAddress) {
                     return [$macAddress => $device];
                 }
+
+                if ($device) {
+                    return [$uid => $device];
+                }
+
                 return null;
             })->filter();
 
         if ($devices->isNotEmpty()) {
-            $this->affectDevices->put($index, $devices);
+            $this->affectDevices->put($uid, $devices);
         }
     }
 }

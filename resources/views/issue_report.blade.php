@@ -24,15 +24,17 @@
                         <td colspan="3">
                             <table>
                                 @foreach($issueReport->getAffectedDevices($issue->uid)->toArray() as $device)
-                                    <tr>
-                                        <td style="padding-left: 30px;">
-                                            {!! current($device) !!}
-                                        </td>
-                                    </tr>
                                     @if($inventory->getDeviceString(key($device)))
                                         <tr class="no-border">
-                                            <td style="padding-left: 30px; font-weight: bold;">
-                                                {!! $inventory->getDeviceString(key($device)) !!}
+                                            <td class="device found">
+                                                {!! current($device) !!}
+                                                <div class="inventory-device">{!! $inventory->getDeviceString(key($device)) !!}</div>
+                                            </td>
+                                        </tr>
+                                    @else
+                                        <tr class="no-border">
+                                            <td class="device">
+                                                {!! current($device) !!}
                                             </td>
                                         </tr>
                                     @endif

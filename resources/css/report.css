@@ -41,6 +41,14 @@ td {
     padding: 10px;
 }
 
+td.device {
+    padding-left: 30px;
+}
+
+td.found {
+    font-weight: bold;
+}
+
 td.to-upper {
     text-transform: uppercase;
     font-weight: bold;
@@ -48,4 +56,8 @@ td.to-upper {
 
 div.controls {
     margin: 10px;
+}
+
+div.inventory-device {
+    color: #0090ff;
 }

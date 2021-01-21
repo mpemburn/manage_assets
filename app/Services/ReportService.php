@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Objects\Inventory;
 use App\Objects\IssueReport;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
@@ -67,7 +68,25 @@ class ReportService
             }
         }
 
-
         return $issueReport;
+    }
+
+    public function receiveUploadedReports($uploadArray): void
+    {
+        collect($uploadArray)->each(function ($file) {
+            $uploadFileName = $file->getClientOriginalName();
+            $ext = $file->getClientOriginalExtension();
+            $timeNow = Carbon::now()->format('Y-m-d-H-i-s');
+
+            $uploadFileName = str_replace('.' . $ext, '-' . $timeNow . '.' . $ext, $uploadFileName);
+            // Upload file to public path in storage directory
+            $file->move(storage_path('app/public/data'), $uploadFileName);
+        });
+    }
+
+    public function storeReport(string $filename): void
+    {
+        $issueReport = $this->getWyebotIssues($filename);
+        $issues = $issueReport->getIssues();
     }
 }
