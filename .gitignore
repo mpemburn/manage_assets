@@ -20,3 +20,4 @@ yarn-error.log
 /public/css/app.css
 /production.env
 /prodenv.v
+/public/js

@@ -1,4 +1,5 @@
 const mix = require('laravel-mix');
+const path = require('path');
 
 /*
  |--------------------------------------------------------------------------
@@ -11,8 +12,17 @@ const mix = require('laravel-mix');
  |
  */
 
+mix.webpackConfig({
+    resolve: {
+        modules: [
+            'node_modules',
+            path.resolve(__dirname, 'mxgraph/javascript')
+        ]
+    }
+});
+
 mix.js('resources/js/*.js', 'public/js').postCss('resources/css/app.css', 'public/css', [
     require('postcss-import'),
     require('tailwindcss'),
     require('autoprefixer'),
-]);
+]).version();

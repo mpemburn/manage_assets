@@ -25,6 +25,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/reports', ReportController::class . '@index')->name('reports');
     Route::get('/report', ReportController::class . '@show')->name('report');
     Route::get('/upload', ReportController::class . '@upload')->name('upload');
+    Route::get('/draw', function () {
+        return view('canvas');
+    });
 });
 
 require __DIR__.'/auth.php';
