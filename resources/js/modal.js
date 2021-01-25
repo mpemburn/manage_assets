@@ -6,7 +6,9 @@ export default class Modal {
         this.overlay = document.querySelector('.modal-overlay')
         this.closemodal = document.querySelectorAll('.modal-close')
 
-        this.addEventListeners();
+        if (typeof(this.modal) !== 'undefined' && this.modal !== null) {
+            this.addEventListeners();
+        }
     }
 
     toggleModal() {

@@ -16,7 +16,9 @@ export default class FileUploader {
         // Modal is added in app.js
         this.modal = options.modal;
 
-        this.addEventListeners();
+        if (typeof(this.dropper) !== 'undefined' && this.dropper !== null) {
+            this.addEventListeners();
+        }
 
         // use to store selected files
         this.FILES = {};
