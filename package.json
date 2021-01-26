@@ -24,6 +24,8 @@
     "dependencies": {
         "draw2d": "^1.0.38",
         "fabric": "^4.3.0",
-        "mxgraph": "^4.2.2"
+        "mxgraph": "^4.2.2",
+        "mxgraph-editor": "^1.0.3",
+        "xml-loader": "^1.2.1"
     }
 }

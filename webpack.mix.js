@@ -1,5 +1,4 @@
 const mix = require('laravel-mix');
-const path = require('path');
 
 /*
  |--------------------------------------------------------------------------
@@ -12,14 +11,13 @@ const path = require('path');
  |
  */
 
-mix.webpackConfig({
-    resolve: {
-        modules: [
-            'node_modules',
-            path.resolve(__dirname, 'mxgraph/javascript')
+module.exports = {
+    module: {
+        loaders : [
+            { test: /\.xml$/, loader: 'xml-loader' } // will load all .xml files with xml-loader by default
         ]
-    }
-});
+    },
+};
 
 mix.js('resources/js/*.js', 'public/js').postCss('resources/css/app.css', 'public/css', [
     require('postcss-import'),

@@ -4,8 +4,13 @@ import Canvas from './canvas';
 
 require('./bootstrap');
 require('alpinejs');
-require('mxgraph');
 
-const modal = new Modal();
-const fileUploader = new FileUploader({modal: modal});
-const canvas = new Canvas();
+const config = require('xml-loader!./keyhandler-commons.xml');
+
+new FileUploader({
+    modal: new Modal()
+});
+
+new Canvas({
+    'config': config
+});
