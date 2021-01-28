@@ -10,6 +10,7 @@ use Google_Client;
 
 class SheetsController extends Controller
 {
+    // TODO: Read this: https://laravel-news.com/google-api-socialite
     public function show()
     {
         session_start();
