@@ -11,6 +11,8 @@ export default class FileUploader {
         this.button = document.getElementById("button");
         this.submit = document.getElementById("submit");
         this.cancel = document.getElementById("cancel");
+        this.csrf = document.getElementsByName('_token');
+        this.bToken = document.getElementsByName('b_token');
         this.xhr = new XMLHttpRequest();
         this.counter = 0;
         // Modal is added in app.js
@@ -109,6 +111,9 @@ export default class FileUploader {
         // Submit all selected files
         this.submit.onclick = () => {
             let formData = new FormData();
+            let bToken = self.bToken[0].value;
+            let csrf = self.csrf[0].value;
+
             for (let key in self.FILES) {
                 if (self.FILES.hasOwnProperty(key)) {
                     formData.append('uploads[]', self.FILES[key]);
@@ -116,6 +121,8 @@ export default class FileUploader {
             }
             self.xhr.open("POST", "/api/receive_files", true);
             self.xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+            self.xhr.setRequestHeader('X-CSRF-TOKEN',csrf);
+            self.xhr.setRequestHeader('Authorization',"Bearer " + bToken);
             self.xhr.send(formData);
         };
 

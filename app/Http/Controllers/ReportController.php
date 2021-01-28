@@ -2,34 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AuthService;
 use App\Services\ReportService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\FileBag;
 
 class ReportController extends Controller
 {
-    public function view()
-    {
-        $report = new ReportService();
-        $fileList = $report->getFileList();
-
-        $response = [
-            'success' => true,
-            'data'    => $fileList,
-        ];
-
-
-        return response()->json($response, 200);
-    }
-
     public function index()
     {
         $report = new ReportService();
+        $auth = new AuthService();
 
         return view('report_files', [
-            'files' => $report->getFileList()
+            'files' => $report->getFileList(),
+            'token' =>  $auth->getAuthToken()
         ]);
     }
 
