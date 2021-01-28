@@ -10,6 +10,20 @@ use Symfony\Component\HttpFoundation\FileBag;
 
 class ReportController extends Controller
 {
+    public function view()
+    {
+        $report = new ReportService();
+        $fileList = $report->getFileList();
+
+        $response = [
+            'success' => true,
+            'data'    => $fileList,
+        ];
+
+
+        return response()->json($response, 200);
+    }
+
     public function index()
     {
         $report = new ReportService();
