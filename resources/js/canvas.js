@@ -26,7 +26,8 @@ const {
     mxUtils,
     mxConstants,
     mxPerimeter,
-    mxRubberband
+    mxRubberband,
+    mxSvgCanvas2D
 } = mxgraph;
 
 export default class Canvas {
@@ -78,7 +79,6 @@ export default class Canvas {
                 var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
                 var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
                 var e1 = graph.insertEdge(parent, null, '', v1, v2);
-                //graph.insertVertex(parent, null, '', 20, 20, 80, 80, this.getSvg());
             }
             finally
             {
@@ -86,8 +86,5 @@ export default class Canvas {
                 graph.getModel().endUpdate();
             }
         }
-    }
-    getSvg () {
-        return 'shape=image;image=data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTEgNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxLjUgMSkiPjxwYXRoIGQ9Im00MS4zNiAyMi41NTJoLTIzLjk4NmMtLjMyMy0yLjk3OS0yLjc0LTUuMzAyLTUuNjY2LTUuMzAyLTMuMTQ2IDAtNS43MDUgMi42ODQtNS43MDUgNS45ODIgMCAzLjI5OSAyLjU1OSA1Ljk4MiA1LjcwNSA1Ljk4MiAyLjk1MSAwIDUuMzg2LTIuMzYxIDUuNjc2LTUuMzc2aDE3LjU0N3YzLjg1N2MwIC4zNTUuMjg3LjY0My42NDMuNjQzLjM1NSAwIC42NDMtLjI4Ny42NDMtLjY0M3YtMy44NTdoNC40OTlsLS4wMDkgNS43MDNjLS4wMDEuMzU1LjI4Ny43MjYuNjQyLjcyNi4zNTUgMCAuNjQ0LS4zNjguNjQ0LS43MjNsLjAxLTYuMzA2YzAtLjE3LS4wNjctLjM1NS0uMTg4LS40NzUtLjEyLS4xMjItLjI4NC0uMjEtLjQ1NS0uMjFtLTI5LjY1MiA1LjM3NmMtMi40MzYgMC00LjQxOS0yLjEwNy00LjQxOS00LjY5NiAwLTIuNTkgMS45ODMtNC42OTcgNC40MTktNC42OTcgMi40MzcgMCA0LjQyIDIuMTA3IDQuNDIgNC42OTcgMCAyLjU4OS0xLjk4MyA0LjY5Ni00LjQyIDQuNjk2IiBmaWxsPSIjN2E4OTk2Ii8+PGNpcmNsZSBzdHJva2U9IiM3YTg5OTYiIHN0cm9rZS13aWR0aD0iMiIgY3g9IjI0IiBjeT0iMjQiIHI9IjI0Ii8+PC9nPjwvc3ZnPg==';
     }
 }

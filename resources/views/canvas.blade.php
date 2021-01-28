@@ -5,8 +5,6 @@
         </h2>
     </x-slot>
     <div class="canvas">
-        <div class="mx-container" id="graphContainer">
-        </div>
-
+        <img id="canvasElement" onclick='DiagramEditor.editElement(this);' src="{!! $plan !!}" style="cursor:pointer;">
     </div>
 </x-app-layout>
