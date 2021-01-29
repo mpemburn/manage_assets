@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Report;
+use App\Models\ReportIssue;
+use App\Models\ReportLine;
 use App\Objects\Inventory;
+use App\Objects\Issue;
 use App\Objects\IssueReport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +16,8 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ReportService
 {
+    public const MAC_ADDRESS_PATTERN = '/[\w]{2}:[\w]{2}:[\w]{2}:[\w]{2}:[\w]{2}:[\w]{2}/';
+
     public function getFileList(): array
     {
         $path = 'public/data/';
@@ -75,12 +81,9 @@ class ReportService
     {
         collect($uploadArray)->each(function ($file) {
             $uploadFileName = $file->getClientOriginalName();
-            $ext = $file->getClientOriginalExtension();
-            $timeNow = Carbon::now()->format('Y-m-d-H-i-s');
-
-            $uploadFileName = str_replace('.' . $ext, '-' . $timeNow . '.' . $ext, $uploadFileName);
             // Upload file to public path in storage directory
             $file->move(storage_path('app/public/data'), $uploadFileName);
+            $this->storeReport($uploadFileName);
         });
     }
 
@@ -88,5 +91,39 @@ class ReportService
     {
         $issueReport = $this->getWyebotIssues($filename);
         $issues = $issueReport->getIssues();
+
+        $report = new Report();
+        $report->file_name = $filename;
+        $report->save();
+
+        $issues->each(static function (Issue $issue) use ($report, $issueReport) {
+            if ($issue->uid) {
+                $reportIssue = new ReportIssue();
+                $reportIssue->report_id = $report->id;
+                $reportIssue->severity = $issue->severity;
+                $reportIssue->problem = $issue->problem;
+                $reportIssue->solution = $issue->solution;
+                $reportIssue->uid = $issue->uid;
+                $reportIssue->save();
+
+                if ($issueReport->hasAffectedDevices($issue->uid)) {
+                    $issueReport->getAffectedDevices($issue->uid)
+                        ->each(static function ($line) use ($issue, $report) {
+                            $lineData = is_array($line) ? current($line) : null;
+                            if ($lineData) {
+                                $reportLine = new ReportLine();
+                                $reportLine->report_id = $report->id;
+                                $reportLine->uid = $issue->uid;
+                                $reportLine->data = $lineData;
+                                preg_match_all(self::MAC_ADDRESS_PATTERN, $lineData, $matches);
+                                $mac_addresses = $matches ? implode(',',current($matches)) : null;
+                                $reportLine->mac_addresses = $mac_addresses;
+                                $reportLine->save();
+                            }
+                    });
+                }
+            }
+
+        });
     }
 }
