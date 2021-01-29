@@ -13,13 +13,34 @@ class ReportController extends Controller
         $report = new ReportService();
         $auth = new AuthService();
 
-        return view('report_files', [
-            'files' => $report->getFileList(),
+        return view('reports', [
+            'reports' => $report->getReportList(),
             'token' =>  $auth->getAuthToken()
         ]);
     }
 
     public function show(Request $request)
+    {
+        $fileuid = $request->get('file');
+
+        $report = new ReportService();
+
+        $issueReport = $report->getReportByUid($fileuid);
+
+        if ($issueReport->hasValidIssueData()) {
+            return view('issue_report', [
+                'filename' => $filename,
+                'issueReport' => $issueReport,
+                'issues' => $issueReport->getIssues()->toArray(),
+                'inventory' => $report->getInventory()
+            ]);
+        }
+
+
+        return view('invalid_data');
+    }
+
+    public function showFile(Request $request)
     {
         $filename = $request->get('file');
 

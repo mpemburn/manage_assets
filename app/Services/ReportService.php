@@ -9,6 +9,7 @@ use App\Objects\Inventory;
 use App\Objects\Issue;
 use App\Objects\IssueReport;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
@@ -26,6 +27,14 @@ class ReportService
         return collect($dir)->map(static function ($file) use ($path) {
             return str_replace($path, '', $file);
         })->sort()->toArray();
+    }
+
+    public function getReportList(): array
+    {
+        return Report::query()
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->toArray();
     }
 
     public function getInventory(): Inventory
@@ -46,11 +55,26 @@ class ReportService
             $inventory->setDevices(collect($data)
                 ->filter(static function ($row) use ($inventory) {
                     $index = $inventory->getHeaderIndex('MAC Address');
-                    return ! empty($row[$index]);
+                    return !empty($row[$index]);
                 }));
         }
 
         return $inventory;
+    }
+
+    public function getReportByUid(string $uid): ?Collection
+    {
+        $report = Report::query()
+            ->where('uid', '=', $uid)
+            ->first();
+        if ($report) {
+            ReportIssue::query()->where('report_id', '=', $report->id)
+                ->each(static function (ReportIssue $issue) {
+                    !d($issue);
+                });
+        }
+
+        die();
     }
 
     public function getWyebotIssues(string $csvFile): IssueReport
@@ -81,19 +105,22 @@ class ReportService
     {
         collect($uploadArray)->each(function ($file) {
             $uploadFileName = $file->getClientOriginalName();
+
             // Upload file to public path in storage directory
             $file->move(storage_path('app/public/data'), $uploadFileName);
-            $this->storeReport($uploadFileName);
+            $ext = $file->getClientOriginalExtension();
+            $this->storeReport($uploadFileName, $ext);
         });
     }
 
-    public function storeReport(string $filename): void
+    public function storeReport(string $filename, $extension = 'csv'): void
     {
         $issueReport = $this->getWyebotIssues($filename);
         $issues = $issueReport->getIssues();
 
         $report = new Report();
-        $report->file_name = $filename;
+        $report->uid = uniqid('', true);
+        $report->file_name = str_replace('.' . $extension, '', $filename);
         $report->save();
 
         $issues->each(static function (Issue $issue) use ($report, $issueReport) {
@@ -116,11 +143,11 @@ class ReportService
                                 $reportLine->uid = $issue->uid;
                                 $reportLine->data = $lineData;
                                 preg_match_all(self::MAC_ADDRESS_PATTERN, $lineData, $matches);
-                                $mac_addresses = $matches ? implode(',',current($matches)) : null;
+                                $mac_addresses = $matches ? implode(',', current($matches)) : null;
                                 $reportLine->mac_addresses = $mac_addresses;
                                 $reportLine->save();
                             }
-                    });
+                        });
                 }
             }
 

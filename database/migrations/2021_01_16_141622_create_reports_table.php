@@ -15,7 +15,8 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->string('file_name');
+            $table->string('uid', 255);
+            $table->string('file_name', 255);
             $table->timestamps();
         });
     }
