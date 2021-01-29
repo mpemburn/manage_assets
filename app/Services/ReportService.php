@@ -125,12 +125,13 @@ class ReportService
 
         $issues->each(static function (Issue $issue) use ($report, $issueReport) {
             if ($issue->uid) {
-                $reportIssue = new ReportIssue();
-                $reportIssue->report_id = $report->id;
-                $reportIssue->severity = $issue->severity;
-                $reportIssue->problem = $issue->problem;
-                $reportIssue->solution = $issue->solution;
-                $reportIssue->uid = $issue->uid;
+                $reportIssue = new ReportIssue([
+                    'report_id' => $report->id,
+                    'severity' => $issue->severity,
+                    'problem' => $issue->problem,
+                    'solution' => $issue->solution,
+                    'uid' => $issue->uid,
+                ]);
                 $reportIssue->save();
 
                 if ($issueReport->hasAffectedDevices($issue->uid)) {
@@ -138,13 +139,15 @@ class ReportService
                         ->each(static function ($line) use ($issue, $report, $reportIssue) {
                             $lineData = is_array($line) ? current($line) : null;
                             if ($lineData) {
-                                $reportLine = new ReportLine();
-                                $reportLine->report_id = $report->id;
-                                $reportLine->report_issue_id = $reportIssue->id;
-                                $reportLine->data = $lineData;
                                 preg_match_all(self::MAC_ADDRESS_PATTERN, $lineData, $matches);
                                 $mac_addresses = $matches ? implode(',', current($matches)) : null;
-                                $reportLine->mac_addresses = $mac_addresses;
+                                $reportLine = new ReportLine([
+                                    'report_id' => $report->id,
+                                    'data' => $lineData,
+                                    'mac_addresses' => $mac_addresses,
+                                ]);
+                                $reportLine->report_issue_id = $reportIssue->id;
+
                                 $reportLine->save();
                             }
                         });
