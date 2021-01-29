@@ -71,4 +71,11 @@ class ReportController extends Controller
         $report = new ReportService();
         $report->receiveUploadedReports($request->uploads);
     }
+
+    public function storeReport(Request $request): void
+    {
+        $filename = $request->get('file');
+        $report = new ReportService();
+        $report->storeReport($filename);
+    }
 }

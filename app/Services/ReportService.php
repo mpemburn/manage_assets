@@ -135,12 +135,12 @@ class ReportService
 
                 if ($issueReport->hasAffectedDevices($issue->uid)) {
                     $issueReport->getAffectedDevices($issue->uid)
-                        ->each(static function ($line) use ($issue, $report) {
+                        ->each(static function ($line) use ($issue, $report, $reportIssue) {
                             $lineData = is_array($line) ? current($line) : null;
                             if ($lineData) {
                                 $reportLine = new ReportLine();
                                 $reportLine->report_id = $report->id;
-                                $reportLine->uid = $issue->uid;
+                                $reportLine->report_issue_id = $reportIssue->id;
                                 $reportLine->data = $lineData;
                                 preg_match_all(self::MAC_ADDRESS_PATTERN, $lineData, $matches);
                                 $mac_addresses = $matches ? implode(',', current($matches)) : null;

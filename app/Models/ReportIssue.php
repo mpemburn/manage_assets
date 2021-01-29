@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ReportIssue extends Model
 {
@@ -16,4 +17,9 @@ class ReportIssue extends Model
         'solution',
         'uid',
     ];
+
+    public function reportLines(): HasMany
+    {
+        return $this->hasMany(ReportLine::class, 'issue_id');
+    }
 }
