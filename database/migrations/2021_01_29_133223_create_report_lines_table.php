@@ -16,7 +16,7 @@ class CreateReportLinesTable extends Migration
         Schema::create('report_lines', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('report_id');
-            $table->string('uid');
+            $table->foreignId('report_issue_id')->constrained('report_issues');
             $table->string('data');
             $table->string('mac_addresses');
             $table->timestamps();
