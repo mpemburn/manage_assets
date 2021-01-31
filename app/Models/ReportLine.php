@@ -21,4 +21,9 @@ class ReportLine extends Model
     {
         return $this->belongsTo('ReportIssue');
     }
+
+    public function getMacAddressesAttribute($value): array
+    {
+        return $value ? explode(',', $value) : [];
+    }
 }
