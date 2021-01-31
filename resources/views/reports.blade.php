@@ -14,7 +14,7 @@
             @foreach($reports as $report)
                 <tr>
                     <td>
-                        <a href="/report?file={!! $report['uid'] !!}">{!! $report['file_name'] !!}</a>
+                        <a href="/report?id={!! $report['uid'] !!}">{!! $report['file_name'] !!}</a>
                     </td>
                     <td>
                         {!! $report['created_at'] !!}
