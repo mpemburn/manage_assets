@@ -38,6 +38,13 @@ class Inventory
         });
     }
 
+    public function hasMacAddress(array $macAddresses): bool
+    {
+        return collect($macAddresses)->contains(function ($mac) {
+            return $this->findDevice($mac)->isNotEmpty();
+        });
+    }
+
     public function getDeviceString(string $key): string
     {
         $device = $this->findDevice($key);
