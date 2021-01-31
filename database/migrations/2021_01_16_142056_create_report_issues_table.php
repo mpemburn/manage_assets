@@ -18,6 +18,7 @@ class CreateReportIssuesTable extends Migration
             $table->bigInteger('report_id');
             $table->string('severity');
             $table->string('problem', 500);
+            $table->string('description', 500)->nullable();
             $table->string('solution', 500);
             $table->string('uid');
             $table->timestamps();
