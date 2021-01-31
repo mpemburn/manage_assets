@@ -6,10 +6,7 @@ use App\Models\Report;
 use App\Models\ReportIssue;
 use App\Models\ReportLine;
 use App\Objects\Inventory;
-use App\Objects\Issue;
-use App\Objects\IssueReport;
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
+use App\Objects\IssueCollection;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
@@ -62,24 +59,30 @@ class ReportService
         return $inventory;
     }
 
-    public function getReportByUid(string $uid): ?Collection
+    public function getReportByUid(string $uid): IssueCollection
     {
+        $issueCollection = new IssueCollection();
+
         $report = Report::query()
             ->where('uid', '=', $uid)
             ->first();
         if ($report) {
+            // Add the report header
+            $issueCollection->addIssue(new ReportIssue(ReportIssue::HEADER_ARRAY));
+            $issueCollection->setFilename($report->file_name);
+            // Add the issues from database
             ReportIssue::query()->where('report_id', '=', $report->id)
-                ->each(static function (ReportIssue $issue) {
-                    !d($issue);
+                ->each(static function (ReportIssue $reportIssue) use (&$issueCollection) {
+                    $issueCollection->addIssue($reportIssue);
                 });
         }
 
-        die();
+        return $issueCollection;
     }
 
-    public function getWyebotIssues(string $csvFile): IssueReport
+    public function getWyebotIssues(string $csvFile): IssueCollection
     {
-        $issueReport = new IssueReport();
+        $issueCollection = new IssueCollection();
 
         $reader = new Csv();
         $reader->setInputEncoding('CP1252');
@@ -88,17 +91,12 @@ class ReportService
         $reader->setSheetIndex(0);
 
         if ($reader) {
-            $spreadsheet = null;
-            try {
-                $spreadsheet = $reader->load(storage_path('app/public/data/') . $csvFile);
-                $data = $spreadsheet->getActiveSheet()->toArray();
-                $issueReport->loadIssues($data);
-            } catch (Exception $e) {
-                return $issueReport;
-            }
+            $csv = $reader->load(storage_path('app/public/data/') . $csvFile);
+            $data = $csv->getActiveSheet()->toArray();
+            $issueCollection->loadIssuesFromCsvData($data);
         }
 
-        return $issueReport;
+        return $issueCollection;
     }
 
     public function receiveUploadedReports($uploadArray): void
@@ -115,15 +113,16 @@ class ReportService
 
     public function storeReport(string $filename, $extension = 'csv'): void
     {
-        $issueReport = $this->getWyebotIssues($filename);
-        $issues = $issueReport->getIssues();
+        $issueCollection = $this->getWyebotIssues($filename);
+        $issues = $issueCollection->getIssues();
 
-        $report = new Report();
-        $report->uid = uniqid('', true);
-        $report->file_name = str_replace('.' . $extension, '', $filename);
+        $report = new Report([
+            'uid' => uniqid('', true),
+            'file_name' => str_replace('.' . $extension, '', $filename),
+        ]);
         $report->save();
 
-        $issues->each(static function (Issue $issue) use ($report, $issueReport) {
+        $issues->each(static function (ReportIssue $issue) use ($report, $issueCollection) {
             if ($issue->uid) {
                 $reportIssue = new ReportIssue([
                     'report_id' => $report->id,
@@ -134,17 +133,21 @@ class ReportService
                 ]);
                 $reportIssue->save();
 
-                if ($issueReport->hasAffectedDevices($issue->uid)) {
-                    $issueReport->getAffectedDevices($issue->uid)
-                        ->each(static function ($line) use ($issue, $report, $reportIssue) {
+                if ($issueCollection->hasAffectedDevices($issue->uid)) {
+                    $issueCollection->getAffectedDevices($issue->uid)
+                        ->each(static function ($line) use ($report, $reportIssue) {
                             $lineData = is_array($line) ? current($line) : null;
                             if ($lineData) {
                                 preg_match_all(self::MAC_ADDRESS_PATTERN, $lineData, $matches);
-                                $mac_addresses = $matches ? implode(',', current($matches)) : null;
+                                $macAddresses = collect($matches)
+                                    ->flatten()
+                                    ->unique()
+                                    ->implode(',');
+
                                 $reportLine = new ReportLine([
                                     'report_id' => $report->id,
                                     'data' => $lineData,
-                                    'mac_addresses' => $mac_addresses,
+                                    'mac_addresses' => $macAddresses,
                                 ]);
                                 $reportLine->report_issue_id = $reportIssue->id;
 
@@ -153,7 +156,6 @@ class ReportService
                         });
                 }
             }
-
         });
     }
 }
