@@ -23,21 +23,17 @@
                     <tr>
                         <td colspan="3">
                             <table>
-                                @foreach($issueReport->getAffectedDevices($issue->uid)->toArray() as $device)
-                                    @if($inventory->getDeviceString(key($device)))
-                                        <tr class="no-border">
-                                            <td class="device found">
-                                                {!! current($device) !!}
-                                                <div class="inventory-device">{!! $inventory->getDeviceString(key($device)) !!}</div>
-                                            </td>
-                                        </tr>
-                                    @else
-                                        <tr class="no-border">
-                                            <td class="device">
-                                                {!! current($device) !!}
-                                            </td>
-                                        </tr>
-                                    @endif
+                                @foreach($issue->reportLines as $reportLine)
+                                    <tr class="no-border">
+                                        <td class="report-line @if($inventory->hasMacAddress($reportLine->mac_addresses))has-device @endif">
+                                            {!! $reportLine->data !!}
+                                            @foreach($reportLine->mac_addresses as $mac)
+                                                @if ($inventory->getDeviceString($mac))
+                                                <div class="inventory-device">{!! $inventory->getDeviceString($mac) !!}</div>
+                                                @endif
+                                            @endforeach
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </table>
                         </td>
