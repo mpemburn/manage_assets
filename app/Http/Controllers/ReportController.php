@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ReportLine;
 use App\Services\AuthService;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
@@ -21,21 +22,19 @@ class ReportController extends Controller
 
     public function show(Request $request)
     {
-        $fileuid = $request->get('file');
+        $fileUid = $request->get('id');
 
         $report = new ReportService();
 
-        $issueReport = $report->getReportByUid($fileuid);
-
-        if ($issueReport->hasValidIssueData()) {
+        $issueCollection = $report->getReportByUid($fileUid);
+        if ($issueCollection->hasValidIssueData()) {
             return view('issue_report', [
-                'filename' => $filename,
-                'issueReport' => $issueReport,
-                'issues' => $issueReport->getIssues()->toArray(),
+                'filename' => $issueCollection->getFilename(),
+                'issueCollection' => $issueCollection,
+                'issues' => $issueCollection->getIssues(),
                 'inventory' => $report->getInventory()
             ]);
         }
-
 
         return view('invalid_data');
     }
