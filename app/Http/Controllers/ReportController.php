@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ReportLine;
 use App\Services\AuthService;
+use App\Services\InventoryService;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
 
@@ -25,6 +26,7 @@ class ReportController extends Controller
         $fileUid = $request->get('id');
 
         $report = new ReportService();
+        $inventory = new InventoryService();
 
         $issueCollection = $report->getReportByUid($fileUid);
         if ($issueCollection->hasValidIssueData()) {
@@ -32,7 +34,7 @@ class ReportController extends Controller
                 'filename' => $issueCollection->getFilename(),
                 'issueCollection' => $issueCollection,
                 'issues' => $issueCollection->getIssues(),
-                'inventory' => $report->getInventory()
+                'inventory' => $inventory->getInventoryCollectionFromExcel()
             ]);
         }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
@@ -24,6 +25,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/login', AuthController::class . '@login')->name('login');
 Route::get('/store', ReportController::class . '@storeReport');
 
+
 Route::middleware('auth:api')->group( function () {
     Route::post('/receive_files', ReportController::class . '@receive')->name('receive');
+    Route::get('/extract', function () {
+        (new InventoryService())->extract();
+    });
 });
+

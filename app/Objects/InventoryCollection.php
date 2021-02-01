@@ -4,14 +4,25 @@ namespace App\Objects;
 
 use Illuminate\Support\Collection;
 
-class Inventory
+class InventoryCollection
 {
     public Collection $headers;
+    public Collection $assets;
     public Collection $devices;
 
     public function setHeaders(array $headers): void
     {
         $this->headers = collect($headers);
+    }
+
+    public function setAssets(Collection $assets): void
+    {
+        // Remove empty rows before setting
+        $this->assets = $assets->filter(function ($value) {
+            return collect($value)
+                ->filter()
+                ->isNotEmpty();
+        });
     }
 
     public function setDevices(Collection $devices): void
