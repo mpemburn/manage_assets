@@ -9,13 +9,14 @@ class Inventory extends Model
 {
     use HasFactory;
 
+    public $table = 'inventory';
+
     public $fillable = [
         'device_type',
         'primary_users',
         'building',
         'floor',
         'room',
-        'room_designation',
         'manufacturer',
         'model',
         'mac_address',
@@ -24,6 +25,7 @@ class Inventory extends Model
         'drive_info',
         'ram',
         'processor',
+        'monitor_count',
         'operating_system',
         'screen_lock_time',
         'antivirus',
