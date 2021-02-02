@@ -46,31 +46,42 @@ class InventoryService
         'AA',
     ];
 
+    public function getInventoryCollection(): InventoryCollection
+    {
+        $inventoryCollection = new InventoryCollection();
+
+        $devices = Inventory::query()->whereNotNull('mac_address')->get(['*']);
+
+        $inventoryCollection->setDevices($devices);
+
+        return $inventoryCollection;
+    }
+
     public function getInventoryCollectionFromExcel(): InventoryCollection
     {
-        $inventory = new InventoryCollection();
+        $inventoryCollection = new InventoryCollection();
 
         try {
             $reader = IOFactory::createReader("Xlsx");
         } catch (Exception $e) {
-            return $inventory;
+            return $inventoryCollection;
         }
 
         if ($reader) {
             $spreadsheet = $reader->load(storage_path('/app/private/') . env('BANNER_INVENTORY_XLS'));
 
             $data = collect($spreadsheet->getActiveSheet()->toArray());
-            $inventory->setHeaders($data->first());
+            $inventoryCollection->setHeaders($data->first());
             $data->shift();
-            $inventory->setAssets($data->filter());
-            $inventory->setDevices($data
-                ->filter(static function ($row) use ($inventory) {
-                    $index = $inventory->getHeaderIndex('MAC Address');
+            $inventoryCollection->setAssets($data->filter());
+            $inventoryCollection->setDevices($data
+                ->filter(static function ($row) use ($inventoryCollection) {
+                    $index = $inventoryCollection->getHeaderIndex('MAC Address');
                     return !empty($row[$index]);
                 }));
         }
 
-        return $inventory;
+        return $inventoryCollection;
     }
 
     public function extract(): void

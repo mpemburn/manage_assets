@@ -2,6 +2,7 @@
 
 namespace App\Objects;
 
+use App\Models\Inventory;
 use Illuminate\Support\Collection;
 
 class InventoryCollection
@@ -9,6 +10,13 @@ class InventoryCollection
     public Collection $headers;
     public Collection $assets;
     public Collection $devices;
+
+    public function __construct()
+    {
+        $this->headers = collect();
+        $this->assets = collect();
+        $this->devices = collect();
+    }
 
     public function setHeaders(array $headers): void
     {
@@ -40,12 +48,10 @@ class InventoryCollection
         return $this->headers->search($name);
     }
 
-    public function findDevice(string $key, string $columnName = 'MAC Address'): Collection
+    public function findDevice(string $key, string $columnName = 'mac_address'): Collection
     {
-        $index = $this->getHeaderIndex($columnName);
-
-        return $this->devices->filter(static function ($device) use ($key, $index) {
-            return $device[$index] === $key;
+        return $this->devices->filter(static function (Inventory $device) use ($key, $columnName) {
+            return $device->mac_address === $key;
         });
     }
 
@@ -58,13 +64,19 @@ class InventoryCollection
 
     public function getDeviceString(string $key): string
     {
-        $device = $this->findDevice($key);
+        $inventoryItem = $this->findDevice($key);
 
-        if ($device->isNotEmpty()) {
-            $deviceArray = current($device->toArray());
-
-            return 'DEVICE: ' . $deviceArray[0] . ' — Location: Building ' . $deviceArray[2] . ' (Type: ' . $deviceArray[3] . ' ' . $deviceArray[4] . ')';
+        if ($inventoryItem->isNotEmpty()) {
+            $device = $inventoryItem->first();
+            return 'DEVICE: '
+                . $device->device_type
+                . ' — Location: Building '
+                . $device->building
+                . $device->floor . ' - '
+                . $device->room . ' - '
+                . ' (Type: ' . $device->manufacturer . ' ' . $device->device_model . ')';
         }
+
         return '';
     }
 }

@@ -34,7 +34,7 @@ class ReportController extends Controller
                 'filename' => $issueCollection->getFilename(),
                 'issueCollection' => $issueCollection,
                 'issues' => $issueCollection->getIssues(),
-                'inventory' => $inventory->getInventoryCollectionFromExcel()
+                'inventory' => $inventory->getInventoryCollection()
             ]);
         }
 
