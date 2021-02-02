@@ -45,6 +45,15 @@ class InventoryService
         'Z',
         'AA',
     ];
+    public const DEFAULT_ZERO_COLUMNS = [
+        'has_user_profiles',
+        'manage_assets',
+        'requires_password',
+        'has_complex_password',
+        'monitor_count',
+        'is_os_current',
+        'is_hd_encrypted',
+    ];
 
     public function receiveUploadedInventory(array $uploadArray): void
     {
@@ -55,7 +64,7 @@ class InventoryService
             $filePath = storage_path('app/private');
             $file->move($filePath, $uploadFileName);
             // Extract file to database
-            $this->extractDataFromInventoryFile($filePath . '/' . $uploadFileName);
+            $this->extractDataFromInventoryFile($filePath . '/' . $uploadFileName, true);
         });
     }
 
@@ -97,9 +106,13 @@ class InventoryService
         return $inventoryCollection;
     }
 
-    public function extractDataFromInventoryFile(string $filePath): void
+    public function extractDataFromInventoryFile(string $filePath, bool $truncateTable = false): void
     {
         $filePath = $filePath ?: storage_path('/app/private/') . env('BANNER_INVENTORY_XLS');
+
+        if ($truncateTable) {
+            Inventory::query()->truncate();
+        }
 
         $inventoryCollection = $this->getInventoryCollectionFromExcel($filePath);
         $inventoryCollection->assets->each(function ($item) {
@@ -108,15 +121,7 @@ class InventoryService
                 ->combine($itemCollection)
                 ->forget(['X', 'Y', 'Z', 'AA']); // Remove empty columns
             $row = $row->map(static function ($value, $key) {
-                if (! is_int($value) && in_array($key, [
-                        'has_user_profiles',
-                        'manage_assets',
-                        'requires_password',
-                        'has_complex_password',
-                        'monitor_count',
-                        'is_os_current',
-                        'is_hd_encrypted',
-                    ])) {
+                if (! is_int($value) && in_array($key, self::DEFAULT_ZERO_COLUMNS, true)) {
                         return '0';
                     }
 
@@ -140,20 +145,10 @@ class InventoryService
         });
     }
 
-    protected function getUniqueValues(InventoryCollection $inventoryCollection, int $columnIndex, array $filterOut = []): Collection
-    {
-        return $inventoryCollection->assets
-            ->pluck($columnIndex)
-            ->diff($filterOut)
-            ->filter()
-            ->sort()
-            ->unique();
-    }
-
     protected function extractLocation(Inventory $inventory, Collection $row): Inventory
     {
-        $pattern = '/([\w])( \- )(.*)( \- )(.*)/';
-
+        $pattern = '/([\w]{1})( \- )(.*)( \- )(.*)/';
+        // Break contents of cell similar to "B - First Floor - Classroom (101)" into constituent parts.
         $inventory->building = preg_replace($pattern, '$1', $row['location']);
         $inventory->floor = preg_replace($pattern, '$3', $row['location']);
         $inventory->room = preg_replace($pattern, '$5', $row['location']);
