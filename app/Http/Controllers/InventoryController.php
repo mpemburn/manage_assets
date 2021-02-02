@@ -22,7 +22,6 @@ class InventoryController extends Controller
 
     public function receive(Request $request): void
     {
-        Log::debug('Got it');
         $inventoryService = new InventoryService();
         $inventoryService->receiveUploadedInventory($request->uploads);
     }

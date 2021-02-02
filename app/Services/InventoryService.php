@@ -52,14 +52,11 @@ class InventoryService
             $uploadFileName = $file->getClientOriginalName();
 
             // Upload file to public path in storage directory
-            $file->move(storage_path('app/private'), $uploadFileName);
-            $this->storeInventoryFile($uploadFileName);
+            $filePath = storage_path('app/private');
+            $file->move($filePath, $uploadFileName);
+            // Extract file to database
+            $this->extractDataFromInventoryFile($filePath . '/' . $uploadFileName);
         });
-    }
-
-    protected function storeInventoryFile(string $uploadFileName): void
-    {
-
     }
 
     public function getInventoryCollection(): InventoryCollection
@@ -73,7 +70,7 @@ class InventoryService
         return $inventoryCollection;
     }
 
-    public function getInventoryCollectionFromExcel(): InventoryCollection
+    public function getInventoryCollectionFromExcel(string $filename): InventoryCollection
     {
         $inventoryCollection = new InventoryCollection();
 
@@ -84,7 +81,7 @@ class InventoryService
         }
 
         if ($reader) {
-            $spreadsheet = $reader->load(storage_path('/app/private/') . env('BANNER_INVENTORY_XLS'));
+            $spreadsheet = $reader->load($filename);
 
             $data = collect($spreadsheet->getActiveSheet()->toArray());
             $inventoryCollection->setHeaders($data->first());
@@ -100,9 +97,11 @@ class InventoryService
         return $inventoryCollection;
     }
 
-    public function extract(): void
+    public function extractDataFromInventoryFile(string $filePath): void
     {
-        $inventoryCollection = $this->getInventoryCollectionFromExcel();
+        $filePath = $filePath ?: storage_path('/app/private/') . env('BANNER_INVENTORY_XLS');
+
+        $inventoryCollection = $this->getInventoryCollectionFromExcel($filePath);
         $inventoryCollection->assets->each(function ($item) {
             $itemCollection = collect($item);
             $row = collect(self::INVENTORY_COLUMNS)
