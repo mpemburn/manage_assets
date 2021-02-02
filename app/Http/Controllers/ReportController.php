@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ReportLine;
 use App\Services\AuthService;
 use App\Services\InventoryService;
 use App\Services\ReportService;
@@ -17,7 +16,8 @@ class ReportController extends Controller
 
         return view('reports', [
             'reports' => $report->getReportList(),
-            'token' =>  $auth->getAuthToken()
+            'token' =>  $auth->getAuthToken(),
+            'action' =>  '/api/receive_files',
         ]);
     }
 
@@ -64,7 +64,7 @@ class ReportController extends Controller
 
     public function upload()
     {
-        return view('upload');
+        return view('uploader');
     }
 
     public function receive(Request $request): void

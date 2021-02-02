@@ -5,8 +5,7 @@ use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
-use Illuminate\Support\Str;
-
+use App\Http\Controllers\InventoryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,8 +27,6 @@ Route::get('/store', ReportController::class . '@storeReport');
 
 Route::middleware('auth:api')->group( function () {
     Route::post('/receive_files', ReportController::class . '@receive')->name('receive');
-    Route::get('/extract', function () {
-        (new InventoryService())->extract();
-    });
+    Route::post('/receive_inventory', InventoryController::class . '@receive');
 });
 

@@ -70,7 +70,7 @@ class InventoryCollection
             $device = $inventoryItem->first();
             $location = $device->building . ' - ' . $device->floor . ' - ';
             $location .= ($device->room) ?: '';
-            
+
             return 'DEVICE: '
                 . $device->device_type
                 . ' — Location: Building ' . $location

@@ -11,6 +11,7 @@ export default class FileUploader {
         this.button = document.getElementById("button");
         this.submit = document.getElementById("submit");
         this.cancel = document.getElementById("cancel");
+        this.apiAction = document.getElementsByName('action');
         this.csrf = document.getElementsByName('_token');
         this.bToken = document.getElementsByName('b_token');
         this.xhr = new XMLHttpRequest();
@@ -111,6 +112,7 @@ export default class FileUploader {
         // Submit all selected files
         this.submit.onclick = () => {
             let formData = new FormData();
+            let apiAction = self.apiAction[0].value;
             let bToken = self.bToken[0].value;
             let csrf = self.csrf[0].value;
 
@@ -119,7 +121,7 @@ export default class FileUploader {
                     formData.append('uploads[]', self.FILES[key]);
                 }
             }
-            self.xhr.open("POST", "/api/receive_files", true);
+            self.xhr.open("POST", apiAction, true);
             self.xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
             self.xhr.setRequestHeader('X-CSRF-TOKEN',csrf);
             self.xhr.setRequestHeader('Authorization',"Bearer " + bToken);

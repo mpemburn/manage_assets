@@ -46,6 +46,22 @@ class InventoryService
         'AA',
     ];
 
+    public function receiveUploadedInventory(array $uploadArray): void
+    {
+        collect($uploadArray)->each(function ($file) {
+            $uploadFileName = $file->getClientOriginalName();
+
+            // Upload file to public path in storage directory
+            $file->move(storage_path('app/private'), $uploadFileName);
+            $this->storeInventoryFile($uploadFileName);
+        });
+    }
+
+    protected function storeInventoryFile(string $uploadFileName): void
+    {
+
+    }
+
     public function getInventoryCollection(): InventoryCollection
     {
         $inventoryCollection = new InventoryCollection();

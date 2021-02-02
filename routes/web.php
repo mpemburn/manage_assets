@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\InventoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +27,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/report', ReportController::class . '@show')->name('report');
     Route::get('/store', ReportController::class . '@storeReport')->name('store');
     Route::get('/upload', ReportController::class . '@upload')->name('upload');
+
+    Route::get('/inventory', InventoryController::class . '@index')->name('inventory');
+
     Route::get('/draw', function () {
         return view('canvas');
     });
