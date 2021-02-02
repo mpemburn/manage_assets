@@ -68,12 +68,12 @@ class InventoryCollection
 
         if ($inventoryItem->isNotEmpty()) {
             $device = $inventoryItem->first();
+            $location = $device->building . ' - ' . $device->floor . ' - ';
+            $location .= ($device->room) ?: '';
+            
             return 'DEVICE: '
                 . $device->device_type
-                . ' — Location: Building '
-                . $device->building
-                . $device->floor . ' - '
-                . $device->room . ' - '
+                . ' — Location: Building ' . $location
                 . ' (Type: ' . $device->manufacturer . ' ' . $device->device_model . ')';
         }
 
