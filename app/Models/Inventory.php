@@ -18,7 +18,7 @@ class Inventory extends Model
         'floor',
         'room',
         'manufacturer',
-        'model',
+        'device_model',
         'mac_address',
         'serial_number',
         'computer_name',

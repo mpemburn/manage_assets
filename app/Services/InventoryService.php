@@ -12,7 +12,6 @@ use App\Models\OperatingSystem;
 use App\Models\Processor;
 use App\Objects\InventoryCollection;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
@@ -60,6 +59,14 @@ class InventoryService
         'is_os_current',
         'is_hd_encrypted',
     ];
+    public const INVENTORY_LIST_HEADER = [
+        'Type',
+        'Manufacturer',
+        'Model',
+        'Location',
+        'MAC Address',
+        'Operating System',
+    ];
 
     public function receiveUploadedInventory(array $uploadArray): void
     {
@@ -72,6 +79,15 @@ class InventoryService
             // Extract file to database
             $this->extractDataFromInventoryFile($filePath . '/' . $uploadFileName, true);
         });
+    }
+
+    public function getInventoryRows(): Collection
+    {
+        return Inventory::query()
+            ->orderBy('device_type')
+            ->orderBy('building')
+            ->orderBy('room')
+            ->get();
     }
 
     public function getInventoryCollection(): InventoryCollection
@@ -144,7 +160,7 @@ class InventoryService
                 return $value;
             });
             // Create unique rows in all sub-tables
-            $this->extractToModels($row);
+//            $this->extractToModels($row);
 
             $inventory = new Inventory($row->toArray());
             // Break the location column into parts
@@ -166,12 +182,14 @@ class InventoryService
 
     protected function extractToModels(Collection $row): void
     {
-        collect(self::MODEL_MAP)->each(static function ($columname, $modelClass) use ($row) {
-            $model = new $modelClass();
-            $value = $row->get($columname);
-            if ($value) {
-                $model->firstOrCreate(['name' => $value]);
-            }
-        });
+        collect(self::MODEL_MAP)
+            ->each(static function (string $columnName, string $modelClass) use ($row) {
+                $model = new $modelClass();
+                $value = $row->get($columnName);
+                if ($value) {
+                    // Write only unique values
+                    $model->firstOrCreate(['name' => $value]);
+                }
+            });
     }
 }

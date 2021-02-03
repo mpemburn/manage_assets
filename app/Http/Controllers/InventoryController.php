@@ -4,19 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Services\AuthService;
 use App\Services\InventoryService;
-use App\Services\ReportService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class InventoryController extends Controller
 {
     public function index()
     {
         $auth = new AuthService();
+        $inventoryService = new InventoryService();
 
         return view('inventory', [
             'token' => $auth->getAuthToken(),
             'action' => '/api/receive_inventory',
+            'headers' => InventoryService::INVENTORY_LIST_HEADER,
+            'rows' => $inventoryService->getInventoryRows()
         ]);
     }
 

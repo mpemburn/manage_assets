@@ -11,6 +11,33 @@
             </button>
         </div>
         <table>
+            <tr>
+                @foreach($headers as $header)
+                    <th>{!! $header!!}</th>
+                @endforeach
+            </tr>
+            @foreach($rows as $row)
+                <tr>
+                    <td>
+                       {!! $row->device_type !!}
+                    </td>
+                    <td>
+                        {!! $row->manufacturer !!}
+                    </td>
+                    <td>
+                        {!! $row->device_model !!}
+                    </td>
+                    <td>
+                       {!! $row->building !!} - {!! $row->floor !!} @if($row->room) - {!! $row->room !!} @endif
+                    </td>
+                    <td>
+                        {!! $row->mac_address !!}
+                    </td>
+                    <td>
+                        {!! $row->operating_system !!}
+                    </td>
+                </tr>
+            @endforeach
         </table>
         <div class="upload-modal">
             <!--Modal-->
