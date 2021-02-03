@@ -78,7 +78,10 @@ class InventoryService
     {
         $inventoryCollection = new InventoryCollection();
 
-        $devices = Inventory::query()->whereNotNull('mac_address')->get(['*']);
+        // Get just those devices with a defined MAC address
+        $devices = Inventory::query()
+            ->whereNotNull('mac_address')
+            ->get();
 
         $inventoryCollection->setDevices($devices);
 
@@ -104,13 +107,9 @@ class InventoryService
 
             $data = collect($spreadsheet->getActiveSheet()->toArray());
             $inventoryCollection->setHeaders($data->first());
+            // Drop the header row and grab the remaining rows
             $data->shift();
             $inventoryCollection->setAssets($data->filter());
-            $inventoryCollection->setDevices($data
-                ->filter(static function ($row) use ($inventoryCollection) {
-                    $index = $inventoryCollection->getHeaderIndex('MAC Address');
-                    return !empty($row[$index]);
-                }));
         }
 
         return $inventoryCollection;
