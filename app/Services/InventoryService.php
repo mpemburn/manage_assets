@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Filters\ExcelColumnFilter;
 use App\Models\Antivirus;
 use App\Models\DeviceModel;
 use App\Models\DeviceType;
@@ -11,6 +12,7 @@ use App\Models\OperatingSystem;
 use App\Models\Processor;
 use App\Objects\InventoryCollection;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
@@ -40,10 +42,14 @@ class InventoryService
         'is_hd_encrypted',
         'date_purchased',
         'comment',
-        'X', // Empty columns that importer brings in
-        'Y',
-        'Z',
-        'AA',
+    ];
+    public const MODEL_MAP = [
+        DeviceType::class => 'device_type',
+        DeviceModel::class => 'device_model',
+        Manufacturer::class => 'manufacturer',
+        Antivirus::class => 'antivirus',
+        OperatingSystem::class => 'operating_system',
+        Processor::class => 'processor',
     ];
     public const DEFAULT_ZERO_COLUMNS = [
         'has_user_profiles',
@@ -90,6 +96,10 @@ class InventoryService
         }
 
         if ($reader) {
+            // Get the letter of the last column we want
+            $lastColumn = chr(count(self::INVENTORY_COLUMNS) + 64);
+            // Set the filter to get the correct range of columns
+            $reader->setReadFilter(new ExcelColumnFilter('A', $lastColumn));
             $spreadsheet = $reader->load($filename);
 
             $data = collect($spreadsheet->getActiveSheet()->toArray());
@@ -115,15 +125,16 @@ class InventoryService
         }
 
         $inventoryCollection = $this->getInventoryCollectionFromExcel($filePath);
+        // Create the rows for the inventory table as well as sub-tables
         $inventoryCollection->assets->each(function ($item) {
             $itemCollection = collect($item);
             $row = collect(self::INVENTORY_COLUMNS)
-                ->combine($itemCollection)
-                ->forget(['X', 'Y', 'Z', 'AA']); // Remove empty columns
+                ->combine($itemCollection);
+
             $row = $row->map(static function ($value, $key) {
-                if (! is_int($value) && in_array($key, self::DEFAULT_ZERO_COLUMNS, true)) {
-                        return '0';
-                    }
+                if (!is_int($value) && in_array($key, self::DEFAULT_ZERO_COLUMNS, true)) {
+                    return '0';
+                }
 
                 if ($value === 'N/A') {
                     return null;
@@ -133,13 +144,11 @@ class InventoryService
                 }
                 return $value;
             });
-            $this->extractToModel(DeviceType::class, $row, 'device_type');
-            $this->extractToModel(DeviceModel::class, $row, 'device_model');
-            $this->extractToModel(Manufacturer::class, $row, 'manufacturer');
-            $this->extractToModel(Antivirus::class, $row, 'antivirus');
-            $this->extractToModel(OperatingSystem::class, $row, 'operating_system');
-            $this->extractToModel(Processor::class, $row, 'processor');
+            // Create unique rows in all sub-tables
+            $this->extractToModels($row);
+
             $inventory = new Inventory($row->toArray());
+            // Break the location column into parts
             $inventory = $this->extractLocation($inventory, $row);
             $inventory->save();
         });
@@ -156,12 +165,14 @@ class InventoryService
         return $inventory;
     }
 
-    protected function extractToModel(string $modelClass, Collection $row, string $columname): void
+    protected function extractToModels(Collection $row): void
     {
-        $model = new $modelClass();
-        $value = $row->get($columname);
-        if ($value) {
-            $model->firstOrCreate(['name' => $value]);
-        }
+        collect(self::MODEL_MAP)->each(static function ($columname, $modelClass) use ($row) {
+            $model = new $modelClass();
+            $value = $row->get($columname);
+            if ($value) {
+                $model->firstOrCreate(['name' => $value]);
+            }
+        });
     }
 }
