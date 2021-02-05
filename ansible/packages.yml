@@ -3,6 +3,7 @@
   become_user: root
   gather_facts: false
   vars:
+    project_dir: /var/www/assets
     ansible_user: ubuntu
 
   tasks:
@@ -14,3 +15,26 @@
           - mariadb-server
           - ccrypt
           - unzip
+          - nodejs
+          - npm
+    - name: Run npm install -g n
+      shell: npm install -g n
+      args:
+        chdir: "{{ project_dir }}"
+    - name: Set n stable
+      shell: n stable
+      args:
+        chdir: "{{ project_dir }}"
+    - name: Update to latest
+      shell: n latest
+      args:
+        chdir: "{{ project_dir }}"
+    - name: Set permissions on node_modules directory
+      file:
+        path: "{{ project_dir }}/node_modules"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0775
+        recurse: yes
+        state: directory
+

@@ -40,8 +40,31 @@
         recurse: yes
         state: directory
 
+    - name: Set permissions on storage/public directory
+      file:
+        path: "{{ project_dir }}/storage/public"
+        owner: "{{ ansible_user }}"
+        group: "{{ group }}"
+        mode: 0775
+        recurse: yes
+        state: directory
+
+    - name: Set permissions on storage/private directory
+      file:
+        path: "{{ project_dir }}/storage/private"
+        owner: "{{ ansible_user }}"
+        group: "{{ group }}"
+        mode: 0775
+        recurse: yes
+        state: directory
+
     - name: Composer install
       shell: composer install -vvv
+      args:
+        chdir: "{{ project_dir }}"
+
+    - name: Run npm install
+      shell: npm install
       args:
         chdir: "{{ project_dir }}"
 

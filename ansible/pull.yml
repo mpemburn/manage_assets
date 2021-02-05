@@ -26,3 +26,13 @@
       args:
         chdir: "{{ project_dir }}"
 
+    - name: Run npm install
+      shell: npm install
+      args:
+        chdir: "{{ project_dir }}"
+
+    - name: Run npm run prod
+      shell: npm run prod
+      args:
+        chdir: "{{ project_dir }}"
+

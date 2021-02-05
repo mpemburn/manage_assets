@@ -17,7 +17,7 @@ class InventoryController extends Controller
             'token' => $auth->getAuthToken(),
             'action' => '/api/receive_inventory',
             'headers' => InventoryService::INVENTORY_LIST_HEADER,
-            'rows' => $inventoryService->getInventoryRows()
+            'rows' => $inventoryService->getInventoryRows(),
         ]);
     }
 

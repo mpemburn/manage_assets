@@ -81,6 +81,11 @@ class InventoryService
         });
     }
 
+    public function getInventoryRowsForDataTables(): array
+    {
+
+    }
+
     public function getInventoryRows(): Collection
     {
         return Inventory::query()
