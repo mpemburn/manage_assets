@@ -11,7 +11,7 @@
                 Upload Excel File
             </button>
         </div>
-        <table id="inventory-table">
+        <table id="data-table" class="stripe">
             <thead>
             <tr>
                 @foreach($headers as $header)
