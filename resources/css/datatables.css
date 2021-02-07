@@ -1,0 +1,11 @@
+div.dataTables_length {
+    margin: 1rem;
+}
+
+div.dataTables_filter {
+    margin: 1rem;
+}
+
+select.dt-custom {
+    width: 100px;
+}

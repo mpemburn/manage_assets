@@ -11,7 +11,7 @@
                 Upload Files
             </button>
         </div>
-        <table id="data-table" class="stripe">
+        <table id="reports-table" class="stripe">
             <thead>
                 <th>
                     Report Name

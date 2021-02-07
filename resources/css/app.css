@@ -1,6 +1,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+@import 'datatables.css';
 @import 'canvas.css';
 @import 'report.css';
 @import 'upload.css';
