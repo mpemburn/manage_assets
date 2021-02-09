@@ -1,13 +1,12 @@
 export default class Modal {
     constructor() {
         this.openmodal = $('.modal-open');
-        this.body = $('body')
-        this.modal = $('.modal')
-        this.overlay = $('.modal-overlay')
-        this.closemodal = $('.modal-close')
+        this.body = $('body');
+        this.modal = $('.modal');
+        this.overlay = $('.modal-overlay');
+        this.closemodal = $('.modal-close');
 
         if (typeof (this.modal) !== 'undefined' && this.modal !== null) {
-            this.body.removeClass('modal-active');
             this.addEventListeners();
         }
     }
