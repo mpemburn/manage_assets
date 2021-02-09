@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\InventoryController;
 use Illuminate\Support\Facades\Route;
@@ -30,9 +31,11 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/inventory', InventoryController::class . '@index')->name('inventory');
 
-    Route::get('/draw', function () {
-        return view('canvas');
-    });
+    Route::get('/admin', AdminController::class . '@index')->name('admin');
+
+//    Route::get('/draw', function () {
+//        return view('canvas');
+//    });
 });
 
 require __DIR__.'/auth.php';

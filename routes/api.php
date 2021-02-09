@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
-use App\Services\InventoryService;
+use App\Http\Controllers\PermissionsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
@@ -28,5 +28,6 @@ Route::get('/store', ReportController::class . '@storeReport');
 Route::middleware('auth:api')->group( function () {
     Route::post('/receive_files', ReportController::class . '@receive')->name('receive');
     Route::post('/receive_inventory', InventoryController::class . '@receive');
-});
 
+    Route::post('/create_permission', PermissionsController::class . '@create');
+});
