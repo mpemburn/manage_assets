@@ -136,7 +136,6 @@ export default class FileUploader {
             self.FILES = {};
             self.empty.classList.remove("hidden");
             self.gallery.append(self.empty);
-            self.modal.toggleModal();
         };
 
         this.xhr.addEventListener('loadend', function (evt) {

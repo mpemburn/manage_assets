@@ -1,47 +1,47 @@
 export default class Modal {
     constructor() {
-        this.openmodal = document.querySelectorAll('.modal-open')
-        this.body = document.querySelector('body')
-        this.modal = document.querySelector('.modal')
-        this.overlay = document.querySelector('.modal-overlay')
-        this.closemodal = document.querySelectorAll('.modal-close')
+        this.openmodal = $('.modal-open');
+        this.body = $('body')
+        this.modal = $('.modal')
+        this.overlay = $('.modal-overlay')
+        this.closemodal = $('.modal-close')
 
-        if (typeof(this.modal) !== 'undefined' && this.modal !== null) {
+        if (typeof (this.modal) !== 'undefined' && this.modal !== null) {
+            this.body.removeClass('modal-active');
             this.addEventListeners();
         }
     }
 
     toggleModal() {
-        this.modal.classList.toggle('opacity-0')
-        this.modal.classList.toggle('fixed')
-        this.modal.classList.toggle('pointer-events-none')
-        this.body.classList.toggle('modal-active')
+        this.modal.toggleClass('opacity-0');
+        this.modal.toggleClass('fixed');
+        this.modal.toggleClass('pointer-events-none');
+        this.body.toggleClass('modal-active');
     }
 
     addEventListeners() {
         let self = this;
-        for (let i = 0; i < this.openmodal.length; i++) {
-            this.openmodal[i].addEventListener('click', function (event) {
-                event.preventDefault()
-                self.toggleModal()
-            })
-        }
-        this.overlay.addEventListener('click', this.toggleModal)
-        for (let i = 0; i < this.closemodal.length; i++) {
-            this.closemodal[i].addEventListener('click', self.toggleModal)
-        }
+        this.openmodal.on('click', function (evt) {
+            evt.preventDefault();
+            self.toggleModal();
+        });
 
-        document.onkeydown = function (evt) {
-            evt = evt || window.event
+        this.overlay.on('click', function() {
+            self.toggleModal();
+        });
+
+        this.closemodal.on('click', function() {
+            self.toggleModal();
+        });
+
+        this.body.keydown(function (evt) {
             let isEscape = false
-            if ("key" in evt) {
-                isEscape = (evt.key === "Escape" || evt.key === "Esc")
-            } else {
-                isEscape = (evt.keyCode === 27)
+            if ('key' in evt) {
+                isEscape = (evt.key === 'Escape' || evt.key === 'Esc')
             }
-            if (isEscape && document.body.classList.contains('modal-active')) {
-                toggleModal()
+            if (isEscape && self.body.hasClass('modal-active')) {
+                self.toggleModal();
             }
-        };
+        });
     }
 }

@@ -4,6 +4,7 @@ import DatatablesManager from './datatables-manager';
 import Inventory from "./inventory";
 import Reports from "./reports";
 
+let $ = require('jquery');
 require('./bootstrap');
 require('alpinejs');
 
