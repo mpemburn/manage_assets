@@ -20,6 +20,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/dashboard', function () {
         return view('dashboard');
@@ -33,9 +34,16 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/admin', AdminController::class . '@index')->name('admin');
 
-//    Route::get('/draw', function () {
-//        return view('canvas');
-//    });
+    Route::get('/test', function () {
+        $truth = collect();
+        $truth->push(true);
+        $truth->push(true);
+        $truth->push(true);
+
+        !d($truth->contains(static function ($value) {
+            return ! $value;
+        }));
+    });
 });
 
 require __DIR__.'/auth.php';
