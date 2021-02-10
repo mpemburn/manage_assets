@@ -14,16 +14,18 @@ new FileUploader({
     modal: modal
 });
 
+let dtManager = new DatatablesManager();
 new Permissions({
-    modal: modal
+    modal: modal,
+    dtManager: dtManager
 });
 
 new Inventory({
-    'DatatablesManager': new DatatablesManager()
+    dtManager: dtManager
 });
 
 new Reports({
-    'DatatablesManager': new DatatablesManager()
+    dtManager: dtManager
 });
 
 

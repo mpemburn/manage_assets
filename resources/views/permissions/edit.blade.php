@@ -8,6 +8,7 @@
                 <form id="permission_edit_form" action="{!! $ajaxUrl !!}">
                     <div class="grid grid-cols-1 md:grid-cols-2">
                         <div class="form-group font-bold">
+                            {{ Form::hidden('permission_id', 0) }}
                             {{ Form::label('name', 'Permission Name:') }}
                             {{ Form::text('name', null, ['class' => 'form-control']) }}
                         </div>
@@ -27,6 +28,9 @@
             <!-- sticky footer -->
             <footer class="flex justify-end px-8 pb-8 pt-4">
                 <div id="permission_error" class="px-3 text-red-600 opacity-0">Error message</div>
+                <button id="update_permission" class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none hidden">
+                    Update
+                </button>
                 <button id="save_permission" class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
                     Save
                 </button>

@@ -10,7 +10,7 @@
                 Add Permission
             </button>
         </div>
-        <table>
+        <table id="permissions-table" class="stripe">
             <thead>
                 <th>
                     Permission Name
@@ -20,11 +20,11 @@
                 </th>
             </thead>
             @foreach ($permissions as $permission)
-                <tr>
+                <tr id="{!! $permission->id !!}" data-name="{!! $permission->name !!}" data-guard-name="{!! $permission->guard_name !!}">
                     <td>
                         {!! $permission->name !!}
                     </td>
-                    <td class="uppercase">
+                    <td class="uppercase" >
                         {!! $permission->guard_name !!}
                     </td>
                 </tr>
