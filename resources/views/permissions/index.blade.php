@@ -11,10 +11,21 @@
             </button>
         </div>
         <table>
+            <thead>
+                <th>
+                    Permission Name
+                </th>
+                <th>
+                    Context
+                </th>
+            </thead>
             @foreach ($permissions as $permission)
                 <tr>
                     <td>
                         {!! $permission->name !!}
+                    </td>
+                    <td class="uppercase">
+                        {!! $permission->guard_name !!}
                     </td>
                 </tr>
             @endforeach
