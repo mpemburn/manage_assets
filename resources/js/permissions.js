@@ -4,6 +4,7 @@ export default class Permissions {
         this.bToken = $('[name="b_token"]');
         this.saveButton = $('#save_permission');
         this.editForm = $("#permission_edit_form");
+        this.errorMessage = $("#permission_error");
 
         // Modal is added in app.js
         this.modal = options.modal;
@@ -31,7 +32,11 @@ export default class Permissions {
                     document.location.reload();
                 },
                 error: function (data) {
-                    alert(data.responseJSON.error);
+                    self.errorMessage.html(data.responseJSON.error)
+                        .removeClass('opacity-0')
+                        .fadeOut(4000, function () {
+                            $(this).addClass('opacity-0').show();
+                        });
                 }
             });
         });
