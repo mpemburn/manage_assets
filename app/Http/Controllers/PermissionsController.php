@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PermissionsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Exceptions\PermissionAlreadyExists;
@@ -9,17 +10,15 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionsController extends Controller
 {
+    protected PermissionsService $permissionsService;
+
+    public function __construct(PermissionsService $permissionsService)
+    {
+        $this->permissionsService = $permissionsService;
+    }
+
     public function create(Request $request)
     {
-        try {
-            Permission::create([
-                'name' => $request->get('name'),
-                'guard_name' => 'web'
-            ]);
-        } catch (PermissionAlreadyExists $e) {
-            Log::debug($e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 404);
-        }
-
+        return $this->permissionsService->createPermission($request);
     }
 }
