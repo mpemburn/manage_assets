@@ -9,14 +9,20 @@ use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
 {
-    public function index()
+    protected AuthService $authService;
+
+    public function __construct(AuthService $authService)
     {
-        $auth = new AuthService();
+        $this->authService = $authService;
+    }
+
+    public function permissions()
+    {
         $permissions = Permission::all();
 
         return view('permissions.index')
-            ->with('ajaxUrl', '/api/create_permission')
+            ->with('baseUrl', '/api/permissions/')
             ->with('permissions', $permissions)
-            ->with('token', $auth->getAuthToken());
+            ->with('token', $this->authService->getAuthToken());
     }
 }

@@ -19,7 +19,7 @@
                         <span>Drag and drop your</span>&nbsp;<span>files anywhere or</span>
                     </p>
                     <input id="hidden-input" type="file" multiple class="hidden" />
-                    <button id="button" class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:shadow-outline focus:outline-none">
+                    <button id="button" class="mt-2 rounded px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:shadow-outline focus:outline-none">
                         Upload a file
                     </button>
                 </header>
@@ -38,10 +38,10 @@
 
             <!-- sticky footer -->
             <footer class="flex justify-end px-8 pb-8 pt-4">
-                <button id="submit" class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
+                <button id="submit" class="rounded px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
                     Upload now
                 </button>
-                <button id="cancel" class="modal-close ml-3 rounded-sm px-3 py-1 hover:bg-gray-300 focus:shadow-outline focus:outline-none">
+                <button id="cancel" class="modal-close ml-3 rounded px-3 py-1 bg-gray-300 hover:bg-gray-200 focus:shadow-outline focus:outline-none">
                     Cancel
                 </button>
             </footer>

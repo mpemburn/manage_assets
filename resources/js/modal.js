@@ -16,6 +16,13 @@ export default class Modal {
         this.modal.toggleClass('fixed');
         this.modal.toggleClass('pointer-events-none');
         this.body.toggleClass('modal-active');
+
+        // Trigger open and close events for others to see
+        if (this.body.hasClass('modal-active')) {
+            $.event.trigger({ type: "modalOpened"});
+        } else {
+            $.event.trigger({ type: "modalClosed"});
+        }
     }
 
     addEventListeners() {

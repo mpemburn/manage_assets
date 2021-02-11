@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Services\PermissionsService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Exceptions\PermissionAlreadyExists;
-use Spatie\Permission\Models\Permission;
 
 class PermissionsController extends Controller
 {
@@ -17,8 +15,18 @@ class PermissionsController extends Controller
         $this->permissionsService = $permissionsService;
     }
 
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
         return $this->permissionsService->createPermission($request);
+    }
+
+    public function update(Request $request): JsonResponse
+    {
+        return $this->permissionsService->updatePermission($request);
+    }
+
+    public function delete(Request $request): JsonResponse
+    {
+        return $this->permissionsService->deletePermission($request);
     }
 }

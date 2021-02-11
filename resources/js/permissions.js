@@ -2,15 +2,22 @@ export default class Permissions {
     constructor(options) {
         this.csrf = $('[name="_token"]');
         this.bToken = $('[name="b_token"]');
+        this.editForm = $("#permission_edit_form");
         this.saveButton = $('#save_permission');
         this.updateButton = $('#update_permission');
-        this.editForm = $("#permission_edit_form");
+        this.deleteButtons = $('*[data-delete]');
+        this.baseUrl = this.editForm.attr('action');
+        this.currentOperation = '';
         this.editPermissionIdField = $('input[name="permission_id"]');
         this.editNameField = $('input[name="name"]');
         this.errorMessage = $("#permission_error");
 
         // Modal is added in app.js
-        this.modal = options.modal;
+        if (options.modal) {
+            this.modal = options.modal;
+            this.resetModal();
+        }
+
         if (options.dtManager) {
             options.dtManager.run('permissions-table', {
                 pageLength: 25,
@@ -26,19 +33,49 @@ export default class Permissions {
     openForEdit(row) {
         let permissionId = row.attr('id');
         let permissionName = row.attr('data-name');
-        let guardName = row.attr('data-guard-name');
 
         this.editPermissionIdField.val(permissionId);
         this.editNameField.val(permissionName);
-        this.checkContextRadioButton(guardName);
 
         this.saveButton.hide();
         this.updateButton.show();
         this.modal.toggleModal();
     }
 
-    checkContextRadioButton(value) {
-        $('input[name="context"][value="' + value + '"]').prop('checked', true);
+    callAjax(method, endpoint, data) {
+        let self = this;
+        let dataValue = data || this.editForm.serialize();
+        this.currentOperation = endpoint;
+        $.ajax({
+            url: this.baseUrl + endpoint,
+            type: method,
+            datatype: 'json',
+            data: dataValue,
+            headers: {
+                'X-CSRF-TOKEN': this.csrf.val(),
+                'Authorization': 'Bearer ' + this.bToken.val()
+            },
+            success: function (response) {
+                if (self.currentOperation !== 'delete') {
+                    self.modal.toggleModal();
+                }
+
+                document.location.reload();
+            },
+            error: function (data) {
+                self.errorMessage.html(data.responseJSON.error)
+                    .removeClass('opacity-0')
+                    .fadeOut(5000, function () {
+                        $(this).addClass('opacity-0').show();
+                    });
+            }
+        });
+    }
+
+    resetModal() {
+        this.editNameField.val('');
+        this.saveButton.show();
+        this.updateButton.hide();
     }
 
     addEventListeners() {
@@ -48,29 +85,27 @@ export default class Permissions {
             self.openForEdit($(this));
         });
 
-        this.saveButton.on('click', function () {
-            $.ajax({
-                url: self.editForm.attr('action'),
-                type: 'POST',
-                datatype: 'json',
-                data: self.editForm.serialize(),
-                headers: {
-                    'X-CSRF-TOKEN': self.csrf.val(),
-                    'Authorization': 'Bearer ' + self.bToken.val()
-                },
-                success: function (response) {
-                    self.modal.toggleModal();
+        $(document).on('modalClosed', function (evt) {
+            self.resetModal();
+        });
 
-                    document.location.reload();
-                },
-                error: function (data) {
-                    self.errorMessage.html(data.responseJSON.error)
-                        .removeClass('opacity-0')
-                        .fadeOut(5000, function () {
-                            $(this).addClass('opacity-0').show();
-                        });
-                }
-            });
+        this.saveButton.on('click', function () {
+            self.callAjax('POST','create');
+        });
+
+        this.updateButton.on('click', function () {
+            self.callAjax('PUT','update');
+        });
+
+        this.deleteButtons.on('click', function (evt) {
+            evt.stopPropagation(); // Prevent opening the modal
+
+            let deleteId = $(this).attr('data-delete');
+            let name = $(this).attr('data-name');
+            if (confirm('Are you sure you want to delete "' + name + '"?')) {
+                self.callAjax('DELETE','delete', 'permission_id=' + deleteId);
+            }
+
         });
     }
 }

@@ -6,7 +6,7 @@
     </x-slot>
     <div class="report">
         <div class="controls">
-            <button id="uploader" class="modal-open rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
+            <button id="uploader" class="modal-open rounded px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
                 Upload Files
             </button>
         </div>

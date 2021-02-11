@@ -32,7 +32,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/inventory', InventoryController::class . '@index')->name('inventory');
 
-    Route::get('/admin', AdminController::class . '@index')->name('admin');
+    Route::get('/admin', AdminController::class . '@permissions')->name('admin');
 
     Route::get('/test', function () {
         $truth = collect();

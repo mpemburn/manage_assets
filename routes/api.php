@@ -29,5 +29,7 @@ Route::middleware('auth:api')->group( function () {
     Route::post('/receive_files', ReportController::class . '@receive')->name('receive');
     Route::post('/receive_inventory', InventoryController::class . '@receive');
 
-    Route::post('/create_permission', PermissionsController::class . '@create');
+    Route::post('/permissions/create', PermissionsController::class . '@create');
+    Route::put('/permissions/update', PermissionsController::class . '@update');
+    Route::delete('/permissions/delete', PermissionsController::class . '@delete');
 });

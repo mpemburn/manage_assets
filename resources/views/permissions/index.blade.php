@@ -6,7 +6,7 @@
     </x-slot>
     <div class="report">
         <div class="controls">
-            <button id="edit_permission" class="modal-open rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
+            <button id="edit_permission" class="modal-open rounded px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
                 Add Permission
             </button>
         </div>
@@ -16,16 +16,22 @@
                     Permission Name
                 </th>
                 <th>
-                    Context
+
                 </th>
             </thead>
             @foreach ($permissions as $permission)
-                <tr id="{!! $permission->id !!}" data-name="{!! $permission->name !!}" data-guard-name="{!! $permission->guard_name !!}">
+                <tr class="cursor-pointer" id="{!! $permission->id !!}" data-name="{!! $permission->name !!}">
                     <td>
                         {!! $permission->name !!}
                     </td>
-                    <td class="uppercase" >
-                        {!! $permission->guard_name !!}
+                    <td class="dt-right">
+                        <button class="w-20 ml-3 rounded px-3 py-1 bg-green-300 hover:bg-green-700 hover:text-white focus:shadow-outline focus:outline-none">
+                            Edit
+                        </button>
+                        <button data-delete="{!! $permission->id !!}" data-name="{!! $permission->name !!}"
+                                class="w-20 ml-3 rounded px-3 py-1 bg-red-300 hover:bg-red-700 hover:text-white focus:shadow-outline focus:outline-none">
+                            Delete
+                        </button>
                     </td>
                 </tr>
             @endforeach
