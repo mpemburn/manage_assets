@@ -25,4 +25,14 @@ class AdminController extends Controller
             ->with('permissions', $permissions)
             ->with('token', $this->authService->getAuthToken());
     }
+
+    public function roles()
+    {
+        
+    }
+
+    public function userRoles()
+    {
+        
+    }
 }

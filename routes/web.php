@@ -3,7 +3,9 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\InventoryController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,17 +34,11 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/inventory', InventoryController::class . '@index')->name('inventory');
 
-    Route::get('/admin', AdminController::class . '@permissions')->name('admin');
+    Route::get('/roles', AdminController::class . '@roles')->name('roles');
+    Route::get('/permissions', AdminController::class . '@permissions')->name('permissions');
+    Route::get('/user_roles', AdminController::class . '@userRoles')->name('user_roles');
 
     Route::get('/test', function () {
-        $truth = collect();
-        $truth->push(true);
-        $truth->push(true);
-        $truth->push(true);
-
-        !d($truth->contains(static function ($value) {
-            return ! $value;
-        }));
     });
 });
 
