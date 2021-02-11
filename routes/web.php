@@ -41,7 +41,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/test', function () {
         /** @var User $user */
         $user = User::find(1);
-        $user->assignRole('Adminstrator');
+        $user->assignRole('Administrator');
     });
 });
 
