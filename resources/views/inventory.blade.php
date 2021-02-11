@@ -5,11 +5,13 @@
         </h2>
     </x-slot>
     <div class="report">
+        @role('Adminstrator')
         <div class="controls">
             <button id="uploader" class="modal-open rounded px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
                 Upload Excel File
             </button>
         </div>
+        @endrole
         <table id="inventory-table" class="stripe">
             <thead>
             <tr>

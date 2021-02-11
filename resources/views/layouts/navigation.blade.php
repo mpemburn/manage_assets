@@ -21,6 +21,7 @@
                     <x-nav-link :href="route('inventory')" :active="request()->routeIs('inventory')">
                         {{ __('Inventory') }}
                     </x-nav-link>
+                    @role('Adminstrator')
                     <!-- Admin Dropdown -->
                     <div class="hidden sm:flex sm:items-center sm:ml-6 pt-1">
                         <x-dropdown align="right" width="48">
@@ -49,6 +50,7 @@
                             </x-slot>
                         </x-dropdown>
                     </div>
+                    @endrole
                 </div>
             </div>
 
