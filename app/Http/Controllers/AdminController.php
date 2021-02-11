@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\AuthService;
-use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -16,6 +15,16 @@ class AdminController extends Controller
         $this->authService = $authService;
     }
 
+    public function roles()
+    {
+        $roles = Role::all();
+
+        return view('roles.index')
+            ->with('baseUrl', '/api/roles/')
+            ->with('roles', $roles)
+            ->with('token', $this->authService->getAuthToken());
+    }
+
     public function permissions()
     {
         $permissions = Permission::all();
@@ -26,13 +35,9 @@ class AdminController extends Controller
             ->with('token', $this->authService->getAuthToken());
     }
 
-    public function roles()
-    {
-        
-    }
 
     public function userRoles()
     {
-        
+
     }
 }

@@ -1,16 +1,26 @@
-export default class Permissions {
+export default class EntitysManager {
+    /* NOTE: the context variable and variabls referring to 'entity'
+        can be either 'role' or 'permission' as set in the acl_wrapper div
+     */
     constructor(options) {
+        let wrapper = $('#acl_wrapper');
+        let context = '';
+        if (wrapper.is('*')) {
+            context = wrapper.attr('data-context');
+        } else {
+            return;
+        }
         this.csrf = $('[name="_token"]');
         this.bToken = $('[name="b_token"]');
-        this.editForm = $("#permission_edit_form");
-        this.saveButton = $('#save_permission');
-        this.updateButton = $('#update_permission');
+        this.editForm = $('#' + context + '_edit_form');
+        this.saveButton = $('#save_' + context + '');
+        this.updateButton = $('#update_' + context + '');
         this.deleteButtons = $('*[data-delete]');
         this.baseUrl = this.editForm.attr('action');
         this.currentOperation = '';
-        this.editPermissionIdField = $('input[name="permission_id"]');
+        this.editEntityIdField = $('input[name="' + context + '_id"]');
         this.editNameField = $('input[name="name"]');
-        this.errorMessage = $("#permission_error");
+        this.errorMessage = $('#' + context + '_error');
 
         // Modal is added in app.js
         if (options.modal) {
@@ -19,7 +29,7 @@ export default class Permissions {
         }
 
         if (options.dtManager) {
-            options.dtManager.run('permissions-table', {
+            options.dtManager.run(context + '-table', {
                 pageLength: 25,
                 lengthMenu: [10, 25, 50, 75, 100],
             });
@@ -31,11 +41,11 @@ export default class Permissions {
     }
 
     openForEdit(row) {
-        let permissionId = row.attr('id');
-        let permissionName = row.attr('data-name');
+        let entityId = row.attr('id');
+        let entityName = row.attr('data-name');
 
-        this.editPermissionIdField.val(permissionId);
-        this.editNameField.val(permissionName);
+        this.editEntityIdField.val(entityId);
+        this.editNameField.val(entityName);
 
         this.saveButton.hide();
         this.updateButton.show();
@@ -103,7 +113,7 @@ export default class Permissions {
             let deleteId = $(this).attr('data-delete');
             let name = $(this).attr('data-name');
             if (confirm('Are you sure you want to delete "' + name + '"?')) {
-                self.callAjax('DELETE','delete', 'permission_id=' + deleteId);
+                self.callAjax('DELETE','delete', 'entity_id=' + deleteId);
             }
 
         });
