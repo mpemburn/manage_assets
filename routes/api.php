@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\RolesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
@@ -28,6 +29,10 @@ Route::get('/store', ReportController::class . '@storeReport');
 Route::middleware('auth:api')->group( function () {
     Route::post('/receive_files', ReportController::class . '@receive')->name('receive');
     Route::post('/receive_inventory', InventoryController::class . '@receive');
+
+    Route::post('/roles/create', RolesController::class . '@create');
+    Route::put('/roles/update', RolesController::class . '@update');
+    Route::delete('/roles/delete', RolesController::class . '@delete');
 
     Route::post('/permissions/create', PermissionsController::class . '@create');
     Route::put('/permissions/update', PermissionsController::class . '@update');

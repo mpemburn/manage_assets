@@ -31,7 +31,6 @@ class PermissionsService
 
     public function updatePermission(Request $request): JsonResponse
     {
-        Log::debug('What the fooz?');
         $permission = $this->find($request);
         if (! $permission) {
             return response()->json(['error' => self::PERMISSION_DOES_NOT_EXIST_ERROR], 404);

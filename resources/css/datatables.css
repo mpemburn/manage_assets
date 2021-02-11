@@ -10,6 +10,10 @@ div.dataTables_info {
     margin: 1rem;
 }
 
+div.dataTables_paginate {
+    margin: 1rem;
+}
+
 select.dt-custom {
     width: 100px;
 }
