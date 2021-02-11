@@ -39,6 +39,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/user_roles', AdminController::class . '@userRoles')->name('user_roles');
 
     Route::get('/test', function () {
+        /** @var User $user */
+        $user = User::find(1);
+        $user->assignRole('Adminstrator');
     });
 });
 
