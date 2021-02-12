@@ -8,23 +8,28 @@ use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
+    protected AuthService $authService;
+    protected InventoryService $inventoryService;
+
+    public function __construct(AuthService $authService, InventoryService $inventoryService)
+    {
+        $this->authService = $authService;
+        $this->inventoryService = $inventoryService;
+    }
+
     public function index()
     {
-        $auth = new AuthService();
-        $inventoryService = new InventoryService();
-
         return view('inventory', [
-            'token' => $auth->getAuthToken(),
+            'token' => $this->authService->getAuthToken(),
             'action' => '/api/receive_inventory',
             'headers' => InventoryService::INVENTORY_LIST_HEADER,
-            'rows' => $inventoryService->getInventoryRows(),
+            'rows' => $this->inventoryService->getInventoryRows(),
         ]);
     }
 
     public function receive(Request $request): void
     {
-        $inventoryService = new InventoryService();
-        $inventoryService->receiveUploadedInventory($request->uploads);
+        $this->inventoryService->receiveUploadedInventory($request->uploads);
     }
 
 }

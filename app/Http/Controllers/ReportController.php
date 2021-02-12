@@ -9,14 +9,26 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+    protected ReportService $reportService;
+    protected AuthService $authService;
+    protected InventoryService $inventoryService;
+
+    public function __construct(
+        ReportService $reportService,
+        AuthService $authService,
+        InventoryService $inventoryService)
+    {
+
+        $this->reportService = $reportService;
+        $this->authService = $authService;
+        $this->inventoryService = $inventoryService;
+    }
+
     public function index()
     {
-        $report = new ReportService();
-        $auth = new AuthService();
-
         return view('reports', [
-            'reports' => $report->getReportList(),
-            'token' =>  $auth->getAuthToken(),
+            'reports' => $this->reportService->getReportList(),
+            'token' =>  $this->authService->getAuthToken(),
             'action' =>  '/api/receive_files',
         ]);
     }
@@ -25,39 +37,15 @@ class ReportController extends Controller
     {
         $fileUid = $request->get('id');
 
-        $report = new ReportService();
-        $inventory = new InventoryService();
-
-        $issueCollection = $report->getReportByUid($fileUid);
+        $issueCollection = $this->reportService->getReportByUid($fileUid);
         if ($issueCollection->hasValidIssueData()) {
             return view('issue_report', [
                 'filename' => $issueCollection->getFilename(),
                 'issueCollection' => $issueCollection,
                 'issues' => $issueCollection->getIssues(),
-                'inventory' => $inventory->getInventoryCollection()
+                'inventory' => $this->inventoryService->getInventoryCollection()
             ]);
         }
-
-        return view('invalid_data');
-    }
-
-    public function showFile(Request $request)
-    {
-        $filename = $request->get('file');
-
-        $report = new ReportService();
-
-        $issueReport = $report->getWyebotIssues($filename);
-
-        if ($issueReport->hasValidIssueData()) {
-            return view('issue_report', [
-                'filename' => $filename,
-                'issueReport' => $issueReport,
-                'issues' => $issueReport->getIssues()->toArray(),
-                'inventory' => $report->getInventory()
-            ]);
-        }
-
 
         return view('invalid_data');
     }
