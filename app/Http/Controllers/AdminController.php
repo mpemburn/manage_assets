@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Services\AuthService;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -38,6 +39,11 @@ class AdminController extends Controller
 
     public function userRoles()
     {
+        $users = User::all();
 
+        return view('user-roles.index')
+            ->with('action', '/api/users/')
+            ->with('users', $users)
+            ->with('token', $this->authService->getAuthToken());
     }
 }

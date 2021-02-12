@@ -1,6 +1,7 @@
 import FileUploader from './file-uploader';
 import Modal from './modal';
 import PermissionsManager from './permissions-manager';
+import UserRolesManager from './user-roles-manager';
 import DatatablesManager from './datatables-manager';
 import Inventory from "./inventory";
 import Reports from "./reports";
@@ -16,6 +17,11 @@ new FileUploader({
 
 let dtManager = new DatatablesManager();
 new PermissionsManager({
+    modal: modal,
+    dtManager: dtManager
+});
+
+new UserRolesManager({
     modal: modal,
     dtManager: dtManager
 });

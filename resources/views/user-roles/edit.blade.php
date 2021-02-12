@@ -32,4 +32,3 @@
         </article>
     </main>
 </div>
-
