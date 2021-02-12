@@ -20,7 +20,7 @@ class AdminController extends Controller
         $roles = Role::all();
 
         return view('roles.index')
-            ->with('baseUrl', '/api/roles/')
+            ->with('action', '/api/roles/')
             ->with('roles', $roles)
             ->with('token', $this->authService->getAuthToken());
     }
@@ -30,7 +30,7 @@ class AdminController extends Controller
         $permissions = Permission::all();
 
         return view('permissions.index')
-            ->with('baseUrl', '/api/permissions/')
+            ->with('action', '/api/permissions/')
             ->with('permissions', $permissions)
             ->with('token', $this->authService->getAuthToken());
     }

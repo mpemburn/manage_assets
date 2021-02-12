@@ -20,11 +20,11 @@ class RolesService
     {
         $roleName = $request->get('name');
         if (!$roleName) {
-            return response()->json(['error' => 'Role Name cannot be empty.'], 404);
+            return response()->json(['error' => 'Role Name cannot be empty.'], 400);
         }
 
         if (! $this->create($roleName)) {
-            return response()->json(['error' => $this->errorMessage], 404);
+            return response()->json(['error' => $this->errorMessage], 400);
         }
         return response()->json(['success' => true]);
     }
@@ -33,11 +33,11 @@ class RolesService
     {
         $role = $this->find($request);
         if (! $role) {
-            return response()->json(['error' => self::ROLE_DOES_NOT_EXIST_ERROR], 404);
+            return response()->json(['error' => self::ROLE_DOES_NOT_EXIST_ERROR], 400);
         }
 
         if (! $this->update($role, $request->get('name'))) {
-            return response()->json(['error' => $this->errorMessage], 404);
+            return response()->json(['error' => $this->errorMessage], 400);
         }
 
         return response()->json(['success' => true]);
@@ -47,12 +47,12 @@ class RolesService
     {
         $role = $this->find($request);
         if (! $role) {
-            return response()->json(['error' => self::ROLE_DOES_NOT_EXIST_ERROR], 404);
+            return response()->json(['error' => self::ROLE_DOES_NOT_EXIST_ERROR], 400);
         }
         try {
             $role->delete();
         } catch (RoleAlreadyExists $e) {
-            return response()->json(['error' => $e->getMessage()], 404);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
 
         return response()->json(['success' => true]);

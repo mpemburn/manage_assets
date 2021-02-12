@@ -5,7 +5,7 @@
 
             <!-- scroll area -->
             <section class="h-full overflow-auto p-8 w-full h-full flex flex-col">
-                <form id="role_edit_form" action="{!! $baseUrl !!}">
+                <form id="role_edit_form" action="{!! $action !!}">
                     <div class="grid grid-cols-1 md:grid-cols-2">
                         <div class="form-group font-bold">
                             {{ Form::hidden('role_id', 0) }}

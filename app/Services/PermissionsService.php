@@ -20,11 +20,11 @@ class PermissionsService
     {
         $permissionName = $request->get('name');
         if (!$permissionName) {
-            return response()->json(['error' => 'Permission Name cannot be empty.'], 404);
+            return response()->json(['error' => 'Permission Name cannot be empty.'], 400);
         }
 
         if (! $this->create($permissionName)) {
-            return response()->json(['error' => $this->errorMessage], 404);
+            return response()->json(['error' => $this->errorMessage], 400);
         }
         return response()->json(['success' => true]);
     }
@@ -33,11 +33,11 @@ class PermissionsService
     {
         $permission = $this->find($request);
         if (! $permission) {
-            return response()->json(['error' => self::PERMISSION_DOES_NOT_EXIST_ERROR], 404);
+            return response()->json(['error' => self::PERMISSION_DOES_NOT_EXIST_ERROR], 400);
         }
 
         if (! $this->update($permission, $request->get('name'))) {
-            return response()->json(['error' => $this->errorMessage], 404);
+            return response()->json(['error' => $this->errorMessage], 400);
         }
 
         return response()->json(['success' => true]);
@@ -47,12 +47,12 @@ class PermissionsService
     {
         $permission = $this->find($request);
         if (! $permission) {
-            return response()->json(['error' => self::PERMISSION_DOES_NOT_EXIST_ERROR], 404);
+            return response()->json(['error' => self::PERMISSION_DOES_NOT_EXIST_ERROR], 400);
         }
         try {
             $permission->delete();
         } catch (PermissionAlreadyExists $e) {
-            return response()->json(['error' => $e->getMessage()], 404);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
 
         return response()->json(['success' => true]);
