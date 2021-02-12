@@ -1,4 +1,4 @@
-export default class EntitysManager {
+export default class PermissionsManager {
     /* NOTE: the context variable and variabls referring to 'entity'
         can be either 'role' or 'permission' as set in the acl_wrapper div
      */
@@ -10,6 +10,7 @@ export default class EntitysManager {
         } else {
             return;
         }
+        this.context = context;
         this.csrf = $('[name="_token"]');
         this.bToken = $('[name="b_token"]');
         this.editForm = $('#' + context + '_edit_form');
@@ -90,13 +91,14 @@ export default class EntitysManager {
 
     addEventListeners() {
         let self = this;
-        // Get contents of row for editing
-        $('.dataTable').on('click', 'tbody tr', function () {
-            self.openForEdit($(this));
-        });
 
         $(document).on('modalClosed', function (evt) {
             self.resetModal();
+        });
+
+        // Get contents of row for editing
+        $('.dataTable').on('click', 'tbody tr', function () {
+            self.openForEdit($(this));
         });
 
         this.saveButton.on('click', function () {
@@ -113,7 +115,7 @@ export default class EntitysManager {
             let deleteId = $(this).attr('data-delete');
             let name = $(this).attr('data-name');
             if (confirm('Are you sure you want to delete "' + name + '"?')) {
-                self.callAjax('DELETE','delete', 'entity_id=' + deleteId);
+                self.callAjax('DELETE','delete', self.context + '_id=' + deleteId);
             }
 
         });
