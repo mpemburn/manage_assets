@@ -1,5 +1,3 @@
-import Modal from "./modal";
-
 export default class FileUploader {
     constructor(options) {
         this.dropper = $('#dropper');
@@ -32,15 +30,17 @@ export default class FileUploader {
     }
 
     addFile(target, file) {
-        const isImage = file.type.match("image.*");
-        const objectURL = URL.createObjectURL(file);
-        const clone = isImage
+        let isImage = file.type.match("image.*");
+        let objectURL = URL.createObjectURL(file);
+        let objectId = objectURL.substring(objectURL.length - 12, objectURL.length);
+        let clone = isImage
             ? this.imageTemplate.content.cloneNode(true)
             : this.fileTemplate.content.cloneNode(true);
 
         clone.querySelector("h1").textContent = file.name;
-        clone.querySelector("li").id = objectURL;
-        clone.querySelector(".delete").dataset.target = objectURL;
+        clone.querySelector("li").id = objectId;
+        clone.querySelector("li").dataset.url = objectURL;
+        clone.querySelector(".delete").dataset.target = objectId;
         clone.querySelector(".size").textContent = this.calculateFileSize(file.size);
 
         isImage &&
@@ -87,7 +87,6 @@ export default class FileUploader {
                 document.location.reload();
             },
             error: function (data) {
-                alert('oops');
                 // self.errorMessage.html(data.responseJSON.error)
                 //     .removeClass('opacity-0')
                 //     .fadeOut(5000, function () {
@@ -110,11 +109,13 @@ export default class FileUploader {
                 0
             }
         });
+
         this.dropper.on('dragover', function (evt) {
             if (self.hasFiles(evt)) {
                 evt.preventDefault();
             }
         });
+
         this.dropper.on('dragenter', function (evt) {
             evt.preventDefault();
             if (!self.hasFiles(evt)) {
@@ -122,24 +123,28 @@ export default class FileUploader {
             }
             ++self.counter && self.overlay.addClass('draggedover');
         });
+
         this.dropper.on('dragleave', function () {
             1 > --self.counter && self.overlay.removeClass('draggedover');
         });
 
-        // event delegation to capture delete events
-        // from the waste buckets in the file preview cards
         this.gallery.on('click', function ({target}) {
-            if (target.classList.contains("delete")) {
-                const ou = target.dataset.target;
-                $(ou).remove(ou);
-
-                self.gallery.children.length === 1 && self.empty.removeClass('hidden');
-
-                delete self.FILES[ou];
+            if (target.classList.contains('delete')) {
+                // Get the object representing the file by its data-target attribute
+                let targetId = $(target).attr('data-target');
+                let fileObject = $('#' + targetId);
+                // Retrieve the URL
+                let fileUrl = fileObject.attr('data-url');
+                // Delete the object
+                fileObject.remove();
+                // Do something mysterious
+                self.gallery.children().length === 1 && self.empty.removeClass('hidden');
+                // Remove the file URL from the FILES collection
+                delete self.FILES[fileUrl];
             }
         });
 
-        this.hidden.on('change' , function () {
+        this.hidden.on('change' , function (evt) {
             for (const file of evt.target.files) {
                 self.addFile(self.gallery, file);
             }
@@ -159,11 +164,6 @@ export default class FileUploader {
                 }
             }
             self.callAjax(formData);
-            // self.xhr.open("POST", apiAction, true);
-            // self.xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-            // self.xhr.setRequestHeader('X-CSRF-TOKEN',csrf);
-            // self.xhr.setRequestHeader('Authorization',"Bearer " + bToken);
-            // self.xhr.send(formData);
         });
 
         // Clear entire selection
@@ -175,16 +175,6 @@ export default class FileUploader {
             self.empty.removeClass('hidden');
             self.gallery.append(self.empty);
         };
-
-        // this.xhr.on('loadend', function (evt) {
-        //     self.modal.toggleModal();
-        //
-        //     document.location.reload();
-        // });
-        //
-        // this.xhr.on('error', function (evt) {
-        //
-        // });
     }
 }
 
