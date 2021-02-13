@@ -4,6 +4,7 @@ export default class UserRolesManager {
         this.bToken = $('[name="b_token"]');
         this.editForm = $('#user_role_edit_form');
         this.editButtons = $('*[data-edit]');
+        this.editUserName = $('#user_name');
 
         if (options.modal) {
             this.modal = options.modal;
@@ -29,9 +30,16 @@ export default class UserRolesManager {
     }
 
     addEventListeners() {
+        let self = this;
+
         this.editButtons.on('click', function (evt) {
-            let userId = $(this).attr('data-user');
+            let userId = $(this).attr('data-edit');
             let name = $(this).attr('data-name');
+            let userHasRoles = $('*[data-userid]');
+
+            self.editUserName.text(name);
+
+            self.modal.toggleModal();
         });
     }
 }

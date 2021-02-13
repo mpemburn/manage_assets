@@ -44,6 +44,7 @@ class AdminController extends Controller
         return view('user-roles.index')
             ->with('action', '/api/users/')
             ->with('users', $users)
+            ->with('roles', Role::all())
             ->with('token', $this->authService->getAuthToken());
     }
 }
