@@ -14,6 +14,9 @@
                 Roles
             </th>
             <th>
+                Permissions
+            </th>
+            <th>
 
             </th>
             </thead>
@@ -26,6 +29,13 @@
                         <ul>
                             @foreach($user->roles()->pluck('name') as $role)
                                 <li data-userid="{!! $user->id !!}" data-role-name="{!! $role !!}" class="list-disc">{!! $role !!}</li>
+                            @endforeach
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            @foreach($user->permissions()->pluck('name') as $permission)
+                                <li data-userid="{!! $user->id !!}" data-permission-name="{!! $permission !!}" class="list-disc">{!! $permission !!}</li>
                             @endforeach
                         </ul>
                     </td>

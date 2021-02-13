@@ -45,6 +45,7 @@ class AdminController extends Controller
             ->with('action', '/api/users/')
             ->with('users', $users)
             ->with('roles', Role::all())
+            ->with('permissions', Permission::all())
             ->with('token', $this->authService->getAuthToken());
     }
 }

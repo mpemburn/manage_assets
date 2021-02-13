@@ -40,11 +40,13 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/test', function () {
         /** @var User $user */
-        $user = User::find(1);
+        $user = User::find(6);
         $roles = $user->roles();
-//        $user->assignRole('Guru');
-
-        !d($roles->pluck('name'));
+        $user->givePermissionTo('View Inventory');
+        $user->givePermissionTo('View Issues');
+//        $user->assignRole('Administrator');
+//        $user->removeRole('Guru');
+//        !d($roles->pluck('name'));
     });
 });
 

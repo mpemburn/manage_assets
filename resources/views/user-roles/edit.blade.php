@@ -5,15 +5,25 @@
 
             <!-- scroll area -->
             <section class="h-full overflow-auto p-8 w-full h-full flex flex-col">
+                <div id="user_name" class="text-lg font-bold"></div>
                 <form id="user_role_edit_form" action="{!! $action !!}">
-                    <div class="grid grid-cols-1 md:grid-cols-2">
-                        <div id="user_name" class="text-lg font-bold"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="form-group font-bold overflow-scroll">
                             Roles:
                             <div class="border-solid border-gray-300 border-2 overflow-scroll">
                                 <ul class="p-4">
                                     @foreach($roles as $role)
                                         <li><input data-type="role" type="checkbox" name="{!! $role->name !!}"> {!! $role->name !!}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="form-group font-bold overflow-scroll">
+                            Permissions:
+                            <div class="border-solid border-gray-300 border-2 overflow-scroll">
+                                <ul class="p-4">
+                                    @foreach($permissions as $permission)
+                                        <li><input data-type="permission" type="checkbox" name="{!! $permission->name !!}"> {!! $permission->name !!}</li>
                                     @endforeach
                                 </ul>
                             </div>
