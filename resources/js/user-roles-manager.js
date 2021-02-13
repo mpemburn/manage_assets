@@ -5,6 +5,10 @@ export default class UserRolesManager {
         this.editForm = $('#user_role_edit_form');
         this.editButtons = $('*[data-edit]');
         this.editUserName = $('#user_name');
+        this.selectedUserId = null;
+        this.selectedRoleName = null;
+        this.roleRows = null;
+        this.editorRoleCheckboxes = $('[data-type="role"]');
 
         if (options.modal) {
             this.modal = options.modal;
@@ -24,20 +28,58 @@ export default class UserRolesManager {
     }
 
     resetModal() {
-        // this.editNameField.val('');
-        // this.saveButton.show();
-        // this.updateButton.hide();ß
+        // Uncheck all "Roles" checkboxes
+        this.editorRoleCheckboxes.each(function () {
+            $(this).prop('checked', false);
+        });
+    }
+
+    getRoleForUserId(userid, roleName) {
+        let self = this;
+
+        this.selectedUserId = userid;
+        this.selectedRoleName = roleName;
+        let found = self.roleRows = $('*[data-userid]')
+            .filter(function () {
+                return $(this).attr('data-userid') === self.selectedUserId
+                    && $(this).attr('data-role-name') === self.selectedRoleName;
+            });
+
+        return found.length === 1 ? found : null;
+    }
+
+    checkDialogRole(roleName) {
+        let self = this;
+
+        if (typeof(roleName) !== "undefined") {
+            this.roleName = roleName;
+            this.editorRoleCheckboxes.each(function () {
+                let thisRoleName = $(this).attr('name')
+                if (thisRoleName === self.roleName) {
+                    $(this).prop('checked', true);
+                }
+            });
+        }
     }
 
     addEventListeners() {
         let self = this;
 
         this.editButtons.on('click', function (evt) {
-            let userId = $(this).attr('data-edit');
             let name = $(this).attr('data-name');
-            let userHasRoles = $('*[data-userid]');
+            let dialogRoles = $('[data-type="role"]');
+            self.selectedUserId = $(this).attr('data-edit');
+            self.resetModal();
 
-            self.editUserName.text(name);
+            dialogRoles.each(function () {
+                let roleName = $(this).attr('name');
+                let found = self.getRoleForUserId(self.selectedUserId, roleName)
+                if (found !== null) {
+                    self.checkDialogRole(found.attr('data-role-name'));
+                }
+            });
+
+            self.editUserName.html(name);
 
             self.modal.toggleModal();
         });

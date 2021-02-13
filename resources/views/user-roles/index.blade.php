@@ -14,7 +14,7 @@
                 Roles
             </th>
             <th>
-                Roles
+
             </th>
             </thead>
             @foreach ($users as $user)

@@ -9,11 +9,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2">
                         <div id="user_name" class="text-lg font-bold"></div>
                         <div class="form-group font-bold overflow-scroll">
-                            <ul>
-                                @foreach($roles as $role)
-                                <li><input data-type="role" type="checkbox" name="{!! $role->name !!}"> {!! $role->name !!}</li>
-                                @endforeach
-                            </ul>
+                            Roles:
+                            <div class="border-solid border-gray-300 border-2 overflow-scroll">
+                                <ul class="p-4">
+                                    @foreach($roles as $role)
+                                        <li><input data-type="role" type="checkbox" name="{!! $role->name !!}"> {!! $role->name !!}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </form>
