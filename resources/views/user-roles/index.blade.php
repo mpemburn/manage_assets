@@ -4,11 +4,14 @@
             {{ __('User Roles') }}
         </h2>
     </x-slot>
-    <div id="acl_wrapper" data-context="user" class="report">
-        <table id="user-table" class="stripe">
+    <div id="acl_wrapper" class="report">
+        <table id="user_roles_table" class="stripe">
             <thead>
             <th>
                 User
+            </th>
+            <th>
+                Roles
             </th>
             <th>
                 Roles
@@ -21,6 +24,11 @@
                     </td>
                     <td>
                         {{  $user->roles()->pluck('name')->implode(' ') }}
+                    </td>
+                    <td class="dt-right">
+                        <button data-edit="{!! $user->id !!}" data-name="{!! $user->name !!}" class="w-20 ml-3 rounded px-3 py-1 bg-green-300 hover:bg-green-700 hover:text-white focus:shadow-outline focus:outline-none">
+                            Edit
+                        </button>
                     </td>
                 </tr>
             @endforeach
