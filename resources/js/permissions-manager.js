@@ -21,6 +21,7 @@ export default class PermissionsManager {
         this.currentOperation = '';
         this.editEntityIdField = $('input[name="id"]');
         this.editNameField = $('input[name="name"]');
+        this.currentNameValue = null;
         this.errorMessage = $('#' + context + '_error');
 
         // Modal is added in app.js
@@ -47,6 +48,7 @@ export default class PermissionsManager {
 
         this.editEntityIdField.val(entityId);
         this.editNameField.val(entityName);
+        this.currentNameValue = entityName;
 
         this.saveButton.hide();
         this.updateButton.show();
@@ -87,6 +89,7 @@ export default class PermissionsManager {
         this.editNameField.val('');
         this.saveButton.show();
         this.updateButton.hide();
+        this.updateButton.prop('disabled', 'disabled');
     }
 
     addEventListeners() {
@@ -100,6 +103,14 @@ export default class PermissionsManager {
         $('.dataTable').on('click', 'tbody tr', function () {
             self.openForEdit($(this));
         });
+
+        this.editNameField.on('keyup', function (evt) {
+            if ($(this).val() === self.currentNameValue) {
+                self.updateButton.prop('disabled', 'disabled');
+            } else {
+                self.updateButton.prop('disabled', '');
+            }
+        })
 
         this.saveButton.on('click', function () {
             self.callAjax('POST','create');
