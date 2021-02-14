@@ -8,7 +8,7 @@
                 <form id="permission_edit_form" action="{!! $action !!}">
                     <div class="grid grid-cols-1 md:grid-cols-2">
                         <div class="form-group font-bold">
-                            {{ Form::hidden('permission_id', 0) }}
+                            {{ Form::hidden('id', 0) }}
                             {{ Form::label('name', 'Permission Name:') }}
                             {{ Form::text('name', null, ['class' => 'form-control']) }}
                         </div>

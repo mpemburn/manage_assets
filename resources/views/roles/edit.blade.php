@@ -8,7 +8,7 @@
                 <form id="role_edit_form" action="{!! $action !!}">
                     <div class="grid grid-cols-1 md:grid-cols-2">
                         <div class="form-group font-bold">
-                            {{ Form::hidden('role_id', 0) }}
+                            {{ Form::hidden('id', 0) }}
                             {{ Form::label('name', 'Role Name:') }}
                             {{ Form::text('name', null, ['class' => 'form-control']) }}
                         </div>

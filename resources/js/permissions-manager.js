@@ -19,7 +19,7 @@ export default class PermissionsManager {
         this.deleteButtons = $('*[data-delete]');
         this.baseUrl = this.editForm.attr('action');
         this.currentOperation = '';
-        this.editEntityIdField = $('input[name="' + context + '_id"]');
+        this.editEntityIdField = $('input[name="id"]');
         this.editNameField = $('input[name="name"]');
         this.errorMessage = $('#' + context + '_error');
 
@@ -115,7 +115,7 @@ export default class PermissionsManager {
             let deleteId = $(this).attr('data-delete');
             let name = $(this).attr('data-name');
             if (confirm('Are you sure you want to delete "' + name + '"?')) {
-                self.callAjax('DELETE','delete', self.context + '_id=' + deleteId);
+                self.callAjax('DELETE','delete','id=' + deleteId);
             }
 
         });

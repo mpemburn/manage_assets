@@ -12,6 +12,7 @@ use Spatie\Permission\Exceptions\PermissionAlreadyExists;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Contracts\Permission as PermissionContract;
+use function Symfony\Component\Translation\t;
 
 class PermissionsCrudService
 {
@@ -19,14 +20,38 @@ class PermissionsCrudService
 
     protected string $errorMessage;
 
-    public function createEntity(Request $request, Model $entity): JsonResponse
+    protected function handleValidation(Request $request, array $rules): bool
     {
-        $this->handleValidation(Validator::make($request->all(), [
-            'name' =>  ['required', 'unique:permissions', 'max:255']
-        ]));
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            $this->errorMessage = $validator->errors()->first();
 
-        $permissionName = $request->get('name');
-        $this->create($permissionName);
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function hasError(): bool
+    {
+        return !empty($this->errorMessage);
+    }
+
+    public function create(Request $request, Model $model): JsonResponse
+    {
+        if ($this->handleValidation($request, [
+            'name' => ['required', 'unique:' . $model->getTable(), 'max:255']
+        ])) {
+            $name = $request->get('name');
+            try {
+                $model->name = $name;
+                $model->guard_name = 'web';
+                $model->save();
+            } catch (\Exception $e) {
+                $this->errorMessage = $e->getMessage();
+                Log::debug($this->errorMessage);
+            }
+        }
 
         if ($this->hasError()) {
             return response()->json(['error' => $this->errorMessage], 400);
@@ -35,93 +60,64 @@ class PermissionsCrudService
         return response()->json(['success' => true]);
     }
 
-    protected function handleValidation(ValidatorContract $validator): void
+    public function update(Request $request, Model $model): JsonResponse
     {
-        if ($validator->fails()) {
-            $this->errorMessage = $validator->errors()->first();
+        if ($this->handleValidation($request, [
+            'name' => ['required', 'unique:' . $model->getTable(), 'max:255']
+        ])) {
+            $model = $this->find($request, $model);
+            if (! $model) {
+                return response()->json(['error' => $this->errorMessage], 400);
+            }
+            try {
+                $model->update([
+                    'name' => $request->get('name'),
+                    'guard_name' => 'web'
+                ]);
+                $model->save();
+            } catch (\Exception $e) {
+                $this->errorMessage = $e->getMessage();
+                Log::debug($this->errorMessage);
+            }
         }
-    }
 
-    protected function hasError(): bool
-    {
-        return ! empty($this->errorMessage);
-    }
-
-    public function updatePermission(Request $request): JsonResponse
-    {
-        $permission = $this->find($request);
-        if (! $permission) {
-            return response()->json(['error' => self::PERMISSION_DOES_NOT_EXIST_ERROR], 400);
-        }
-
-        if (! $this->update($permission, $request->get('name'))) {
+        if ($this->hasError()) {
             return response()->json(['error' => $this->errorMessage], 400);
         }
 
         return response()->json(['success' => true]);
     }
 
-    public function deletePermission(Request $request): JsonResponse
+    public function delete(Request $request, Model $model): JsonResponse
     {
-        $permission = $this->find($request);
-        if (! $permission) {
-            return response()->json(['error' => self::PERMISSION_DOES_NOT_EXIST_ERROR], 400);
+        $model = $this->find($request, $model);
+        if (!$model) {
+            return response()->json(['error' => $this->errorMessage], 400);
         }
         try {
-            $permission->delete();
-        } catch (PermissionAlreadyExists $e) {
+            $model->delete();
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
 
         return response()->json(['success' => true]);
     }
 
-    protected function create(string $permissionName): bool
+
+    protected function find(Request $request, Model $model): ?Model
     {
+        $modelId = $request->get('id');
+
+        Log::debug($modelId);
         try {
-            Permission::create([
-                'name' => $permissionName,
-                'guard_name' => 'web'
-            ]);
-        } catch (PermissionAlreadyExists $e) {
-            $this->errorMessage = $e->getMessage();
-            Log::debug($this->errorMessage);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    protected function update(PermissionContract $permission, string $newName): bool
-    {
-        try {
-            $permission->name = $newName;
-            $permission->save();
-        } catch (PermissionAlreadyExists $e) {
-            $this->errorMessage = $e->getMessage();
-            Log::debug($this->errorMessage);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    protected function find(Request $request): ?PermissionContract
-    {
-        $permission = null;
-        $permissionId = $request->get('permission_id');
-
-        try {
-            $permission = Permission::findById($permissionId, 'web');
-        } catch (PermissionDoesNotExist $e) {
+            $model = $model->findById($modelId, 'web');
+        } catch (\Exception $e) {
             $this->errorMessage = $e->getMessage();
             Log::debug($this->errorMessage);
 
             return null;
         }
 
-        return  $permission;
+        return $model;
     }
 }

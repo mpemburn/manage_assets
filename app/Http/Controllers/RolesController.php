@@ -2,31 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\RolesService;
+use App\Services\PermissionsCrudService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class RolesController extends Controller
 {
-    protected RolesService $rolesService;
+    protected PermissionsCrudService $crudService;
 
-    public function __construct(RolesService $rolesService)
+    public function __construct(PermissionsCrudService $rolesService)
     {
-        $this->rolesService = $rolesService;
+        $this->crudService = $rolesService;
     }
 
     public function create(Request $request): JsonResponse
     {
-        return $this->rolesService->createRole($request);
+        return $this->crudService->create($request, new Role());
     }
 
     public function update(Request $request): JsonResponse
     {
-        return $this->rolesService->updateRole($request);
+        return $this->crudService->update($request, new Role());
     }
 
     public function delete(Request $request): JsonResponse
     {
-        return $this->rolesService->deleteRole($request);
+        return $this->crudService->delete($request, new Role());
     }
 }
