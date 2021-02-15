@@ -5,7 +5,7 @@ export default class UserRolesManager {
         this.editForm = $('#user_role_edit_form');
         this.editButtons = $('*[data-edit]');
         this.editUserName = $('#user_name');
-        this.selectedUserId = null;
+        this.editUserId = $('input[name="user_id"]');
         this.selectedRoleName = null;
         this.selectedPermissionName = null;
         this.roleRows = null;
@@ -40,56 +40,26 @@ export default class UserRolesManager {
         });
     }
 
-    getRoleForUserId(userid, roleName) {
+    readRowEntities(row, entityType) {
         let self = this;
+        let collection = row.find('li[data-type="' + entityType + '"]');
 
-        this.selectedUserId = userid;
-        this.selectedRoleName = roleName;
-        let found = self.roleRows = $('*[data-userid]')
-            .filter(function () {
-                return $(this).attr('data-userid') === self.selectedUserId
-                    && $(this).attr('data-role-name') === self.selectedRoleName;
-            });
-
-        return found.length === 1 ? found : null;
+        this.entityType = entityType;
+        collection.each(function () {
+            let entityName = $(this).data('entityName');
+            self.selectDialogCheckboxes(self.entityType, entityName);
+        });
     }
 
-    getPermissionForUserId(userid, permissionName) {
+    selectDialogCheckboxes(entityType, entityName) {
         let self = this;
+        // Reference the correct checkboxes for roles or permissions
+        this.editorCheckboxes = $('[data-type="' + entityType + '"]');
 
-        this.selectedUserId = userid;
-        this.selectedPermissionName = permissionName;
-        let found = self.permissionRows = $('*[data-userid]')
-            .filter(function () {
-                return $(this).attr('data-userid') === self.selectedUserId
-                    && $(this).attr('data-permission-name') === self.selectedPermissionName;
-            });
-
-        return found.length === 1 ? found : null;
-    }
-
-    checkDialogRole(roleName) {
-        let self = this;
-
-        if (typeof(roleName) !== "undefined") {
-            this.roleName = roleName;
-            this.editorRoleCheckboxes.each(function () {
-                let thisRoleName = $(this).attr('name')
-                if (thisRoleName === self.roleName) {
-                    $(this).prop('checked', true);
-                }
-            });
-        }
-    }
-
-    checkDialogPermission(permissionName) {
-        let self = this;
-
-        if (typeof(permissionName) !== "undefined") {
-            this.permissionName = permissionName;
-            this.editorPermissionCheckboxes.each(function () {
-                let thisPermissioName = $(this).attr('name')
-                if (thisPermissioName === self.permissionName) {
+        if (typeof(entityName) !== "undefined") {
+            this.entityName = entityName;
+            this.editorCheckboxes.each(function () {
+                if ($(this).attr('name') === self.entityName) {
                     $(this).prop('checked', true);
                 }
             });
@@ -100,30 +70,20 @@ export default class UserRolesManager {
         let self = this;
 
         this.editButtons.on('click', function (evt) {
-            let name = $(this).attr('data-name');
-            let dialogRoles = $('[data-type="role"]');
-            let dialogPermissions = $('[data-type="permission"]');
-            self.selectedUserId = $(this).attr('data-edit');
+            let name = $(this).data('name');
+            let userId = $(this).data('edit');
+            let row = $(this).parent().parent();
+
+            //Reset all elements in edit dialog
             self.resetModal();
 
-            dialogRoles.each(function () {
-                let roleName = $(this).attr('name');
-                let found = self.getRoleForUserId(self.selectedUserId, roleName)
-                if (found !== null) {
-                    self.checkDialogRole(found.attr('data-role-name'));
-                }
-            });
-
-            dialogPermissions.each(function () {
-                let permissionName = $(this).attr('name');
-                let found = self.getPermissionForUserId(self.selectedUserId, permissionName)
-                if (found !== null) {
-                    self.checkDialogPermission(found.attr('data-permission-name'));
-                }
-            });
+            // Find the lists of roles and permission in the row
+            // and use this to check the appropriate boxes in the dialog
+            self.readRowEntities(row, 'role')
+            self.readRowEntities(row, 'permission')
 
             self.editUserName.html(name);
-
+            self.editUserId.val(userId);
             self.modal.toggleModal();
         });
     }
