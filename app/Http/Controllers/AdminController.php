@@ -42,7 +42,7 @@ class AdminController extends Controller
         $users = User::all();
 
         return view('user-roles.index')
-            ->with('action', '/api/users/')
+            ->with('action', '/api/user_roles/')
             ->with('users', $users)
             ->with('roles', Role::all())
             ->with('permissions', Permission::all())

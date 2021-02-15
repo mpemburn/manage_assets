@@ -11,6 +11,8 @@ export default class UserRolesManager {
         this.roleRows = null;
         this.editorRoleCheckboxes = $('[data-type="role"]');
         this.editorPermissionCheckboxes = $('[data-type="permission"]');
+        this.saveButton = $('#save_user_roles');
+        this.apiAction = $('#modal_form').attr('action');
 
         if (options.modal) {
             this.modal = options.modal;
@@ -56,7 +58,7 @@ export default class UserRolesManager {
         // Reference the correct checkboxes for roles or permissions
         this.editorCheckboxes = $('[data-type="' + entityType + '"]');
 
-        if (typeof(entityName) !== "undefined") {
+        if (typeof (entityName) !== "undefined") {
             this.entityName = entityName;
             this.editorCheckboxes.each(function () {
                 if ($(this).attr('name') === self.entityName) {
@@ -86,5 +88,33 @@ export default class UserRolesManager {
             self.editUserId.val(userId);
             self.modal.toggleModal();
         });
+
+        this.saveButton.on('click', function () {
+            let dataValue = self.editForm.serialize();
+
+            $.ajax({
+                url: self.apiAction,
+                type: 'POST',
+                datatype: 'json',
+                data: dataValue,
+                headers: {
+                    'X-CSRF-TOKEN': self.csrf.val(),
+                    'Authorization': 'Bearer ' + self.bToken.val()
+                },
+                success: function (response) {
+                    self.modal.toggleModal();
+
+                    document.location.reload();
+                },
+                error: function (data) {
+                    let foo = 'bar';
+                    // self.errorMessage.html(data.responseJSON.error)
+                    //     .removeClass('opacity-0')
+                    //     .fadeOut(5000, function () {
+                    //         $(this).addClass('opacity-0').show();
+                    //     });
+                }
+            });
+        })
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\UserRolesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
@@ -37,4 +38,6 @@ Route::middleware('auth:api')->group( function () {
     Route::post('/permissions/create', PermissionsController::class . '@create');
     Route::put('/permissions/update', PermissionsController::class . '@update');
     Route::delete('/permissions/delete', PermissionsController::class . '@delete');
+
+    Route::post('/user_roles', UserRolesController::class . '@edit');
 });
