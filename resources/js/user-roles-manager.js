@@ -56,12 +56,12 @@ export default class UserRolesManager {
     selectDialogCheckboxes(entityType, entityName) {
         let self = this;
         // Reference the correct checkboxes for roles or permissions
-        this.editorCheckboxes = $('[data-type="' + entityType + '"]');
+        this.editorCheckboxes = $('input[data-type="' + entityType + '"]');
 
         if (typeof (entityName) !== "undefined") {
             this.entityName = entityName;
             this.editorCheckboxes.each(function () {
-                if ($(this).attr('name') === self.entityName) {
+                if ($(this).val() === self.entityName) {
                     $(this).prop('checked', true);
                 }
             });
