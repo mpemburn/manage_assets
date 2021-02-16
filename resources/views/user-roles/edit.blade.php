@@ -8,13 +8,17 @@
                 <div id="user_name" class="text-lg font-bold"></div>
                 <form id="user_role_edit_form" action="{!! $action !!}">
                     <input type="hidden" name="user_id">
+                    <input type="hidden" name="current_user_id" value="{!! Auth::user()->id !!}">
+                    <input type="hidden" name="is_admin" value="{!! $currentUserIsAdmin !!}">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="form-group font-bold overflow-scroll">
                             Roles:
                             <div class="border-solid border-gray-300 border-2 overflow-scroll">
                                 <ul class="p-4">
                                     @foreach($roles as $role)
-                                        <li><input data-type="role" type="checkbox" name="role[]" value="{!! $role->name !!}"> {!! $role->name !!}</li>
+                                        <li class=""><input class="disabled:opacity-50" data-type="role" type="checkbox" name="role[]" value="{!! $role->name !!}">
+                                            {!! $role->name !!}
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>

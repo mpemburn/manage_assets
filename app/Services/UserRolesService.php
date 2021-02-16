@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
@@ -21,6 +22,14 @@ class UserRolesService
     protected function hasError(): bool
     {
         return ! empty($this->errorMessage);
+    }
+
+    public function isCurrentUserAdmin(): bool
+    {
+        $userId = auth()->user()->id;
+        $user = User::find($userId);
+
+        return $user->hasRole('Administrator') ? true : false;
     }
 
     public function edit(Request $request): JsonResponse

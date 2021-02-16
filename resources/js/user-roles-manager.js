@@ -36,6 +36,7 @@ export default class UserRolesManager {
         // Uncheck all "Roles" checkboxes
         this.editorRoleCheckboxes.each(function () {
             $(this).prop('checked', false);
+            $(this).prop('disabled', '');
         });
         // Uncheck all "Permissions" checkboxes
         this.editorPermissionCheckboxes.each(function () {
@@ -61,12 +62,24 @@ export default class UserRolesManager {
 
         if (typeof (entityName) !== "undefined") {
             this.entityName = entityName;
+            this.entityType = entityType;
             this.editorCheckboxes.each(function () {
                 if ($(this).val() === self.entityName) {
                     $(this).prop('checked', true);
                 }
+                if (self.entityType === 'role' && $(this).val() === 'Administrator') {
+                    // If the current user is an Administrator, make so this can't be changed
+                    self.disableAdminChangeForCurrentUser($(this));
+                }
             });
         }
+    }
+
+    disableAdminChangeForCurrentUser(checkbox) {
+        let currentUserId = $('input[name="current_user_id"]').val();
+        let disabled = (currentUserId === this.editUserId.val()) ? 'disabled' : '';
+
+        checkbox.prop('disabled', disabled);
     }
 
     addEventListeners() {
@@ -80,13 +93,13 @@ export default class UserRolesManager {
             //Reset all elements in edit dialog
             self.resetModal();
 
+            self.editUserName.html(name);
+            self.editUserId.val(userId);
             // Find the lists of roles and permission in the row
             // and use this to check the appropriate boxes in the dialog
             self.readRowEntities(row, 'role')
             self.readRowEntities(row, 'permission')
 
-            self.editUserName.html(name);
-            self.editUserId.val(userId);
             self.modal.toggleModal();
         });
 

@@ -4,16 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\AuthService;
+use App\Services\UserRolesService;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
 {
     protected AuthService $authService;
+    protected UserRolesService $userRolesService;
 
-    public function __construct(AuthService $authService)
+    public function __construct(AuthService $authService, UserRolesService $userRolesService)
     {
         $this->authService = $authService;
+        $this->userRolesService = $userRolesService;
     }
 
     public function roles()
@@ -44,6 +47,7 @@ class AdminController extends Controller
         return view('user-roles.index')
             ->with('action', '/api/user_roles/')
             ->with('users', $users)
+            ->with('currentUserIsAdmin', $this->userRolesService->isCurrentUserAdmin())
             ->with('roles', Role::all())
             ->with('permissions', Permission::all())
             ->with('token', $this->authService->getAuthToken());
