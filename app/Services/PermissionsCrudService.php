@@ -16,7 +16,6 @@ use function Symfony\Component\Translation\t;
 
 class PermissionsCrudService
 {
-    public const PERMISSION_DOES_NOT_EXIST_ERROR = 'This Permission does not exist';
 
     protected string $errorMessage;
 

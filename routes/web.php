@@ -4,7 +4,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\InventoryController;
 use App\Models\User;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 /*
@@ -40,13 +42,12 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/test', function () {
         /** @var User $user */
-        $user = User::find(6);
+        $user = User::find(3);
         $roles = $user->roles();
-        $user->givePermissionTo('View Inventory');
-        $user->givePermissionTo('View Issues');
-//        $user->assignRole('Administrator');
-//        $user->removeRole('Guru');
+
+
 //        !d($roles->pluck('name'));
+
     });
 });
 
