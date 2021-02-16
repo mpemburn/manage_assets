@@ -15,6 +15,7 @@ export default class FileUploader {
         this.bToken = $('[name="b_token"]');
         this.xhr = new XMLHttpRequest();
         this.counter = 0;
+        this.errorMessage = $('#file_uploader_error');
         // use to store selected files
         this.FILES = {};
 
@@ -87,11 +88,11 @@ export default class FileUploader {
                 document.location.reload();
             },
             error: function (data) {
-                // self.errorMessage.html(data.responseJSON.error)
-                //     .removeClass('opacity-0')
-                //     .fadeOut(5000, function () {
-                //         $(this).addClass('opacity-0').show();
-                //     });
+                self.errorMessage.html(data.responseJSON.error)
+                    .removeClass('opacity-0')
+                    .fadeOut(5000, function () {
+                        $(this).addClass('opacity-0').show();
+                    });
             }
         });
     }

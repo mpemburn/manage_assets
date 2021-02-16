@@ -11,12 +11,17 @@ use App\Models\Manufacturer;
 use App\Models\OperatingSystem;
 use App\Models\Processor;
 use App\Objects\InventoryCollection;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class InventoryService
 {
+    public const ALLOWED_FILE_TYPE = 'xlsx';
+
     public const INVENTORY_COLUMNS = [
         'device_type',
         'primary_users',
@@ -68,22 +73,35 @@ class InventoryService
         'Operating System',
     ];
 
-    public function receiveUploadedInventory(array $uploadArray): void
-    {
-        collect($uploadArray)->each(function ($file) {
-            $uploadFileName = $file->getClientOriginalName();
+    protected string $errorMessage;
 
-            // Upload file to public path in storage directory
-            $filePath = storage_path('app/private');
-            $file->move($filePath, $uploadFileName);
-            // Extract file to database
-            $this->extractDataFromInventoryFile($filePath . '/' . $uploadFileName, true);
-        });
+    protected function hasError(): bool
+    {
+        return ! empty($this->errorMessage);
     }
 
-    public function getInventoryRowsForDataTables(): array
+    public function receiveUploadedInventory(array $uploadArray): JsonResponse
     {
+        collect($uploadArray)->each(function (UploadedFile $file) {
 
+            if ($file->getClientOriginalExtension() === self::ALLOWED_FILE_TYPE) {
+                $uploadFileName = $file->getClientOriginalName();
+                // Upload file to public path in storage directory
+                $filePath = storage_path('app/private');
+                $file->move($filePath, $uploadFileName);
+                // Extract file to database
+                $this->extractDataFromInventoryFile($filePath . '/' . $uploadFileName, true);
+            } else {
+                $this->errorMessage = 'Only files of .' . self::ALLOWED_FILE_TYPE . ' type are permitted.';
+            }
+
+        });
+
+        if ($this->hasError()) {
+            return response()->json(['error' => $this->errorMessage], 400);
+        }
+
+        return response()->json(['success' => true]);
     }
 
     public function getInventoryRows(): Collection
@@ -116,6 +134,9 @@ class InventoryService
         try {
             $reader = IOFactory::createReader("Xlsx");
         } catch (Exception $e) {
+            Log::debug($e->getMessage());
+            $this->errorMessage = 'Unable to read file: "' . $filename . '".';
+
             return $inventoryCollection;
         }
 
@@ -164,8 +185,6 @@ class InventoryService
                 }
                 return $value;
             });
-            // Create unique rows in all sub-tables
-//            $this->extractToModels($row);
 
             $inventory = new Inventory($row->toArray());
             // Break the location column into parts

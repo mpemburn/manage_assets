@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\AuthService;
 use App\Services\InventoryService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class InventoryController extends Controller
@@ -27,9 +28,9 @@ class InventoryController extends Controller
         ]);
     }
 
-    public function receive(Request $request): void
+    public function receive(Request $request): JsonResponse
     {
-        $this->inventoryService->receiveUploadedInventory($request->uploads);
+        return $this->inventoryService->receiveUploadedInventory($request->uploads);
     }
 
 }
