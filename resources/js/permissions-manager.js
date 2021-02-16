@@ -23,6 +23,7 @@ export default class PermissionsManager {
         this.editNameField = $('input[name="name"]');
         this.currentNameValue = null;
         this.errorMessage = $('#' + context + '_error');
+        this.permissionsWrapper = $('#permissions_for_role').find('ul');
 
         // Modal is added in app.js
         if (options.modal) {
@@ -49,6 +50,9 @@ export default class PermissionsManager {
         this.editEntityIdField.val(entityId);
         this.editNameField.val(entityName);
         this.currentNameValue = entityName;
+        if (this.context === 'role') {
+            this.retrievePermissionsForRole(entityName, 'permissions')
+        }
 
         this.saveButton.hide();
         this.updateButton.show();
@@ -85,6 +89,44 @@ export default class PermissionsManager {
         });
     }
 
+    retrievePermissionsForRole(roleName, endpoint) {
+        let self = this;
+        $.ajax({
+            url: this.baseUrl + endpoint,
+            type: 'GET',
+            datatype: 'json',
+            data: 'role_name=' + roleName,
+            headers: {
+                'X-CSRF-TOKEN': this.csrf.val(),
+                'Authorization': 'Bearer ' + this.bToken.val()
+            },
+            success: function (response) {
+                self.populateRolePermission(response);
+            },
+            error: function (data) {
+                self.errorMessage.html(data.responseJSON.error)
+                    .removeClass('opacity-0')
+                    .fadeOut(5000, function () {
+                        $(this).addClass('opacity-0').show();
+                    });
+            }
+        });
+
+    }
+
+    populateRolePermission(response) {
+        let self = this;
+
+        this.permissions = response.permissions;
+
+        let editorCheckboxes = $('input[data-type="permission"]');
+        editorCheckboxes.each(function () {
+            if ($.inArray($(this).val(), self.permissions) !== -1) {
+                $(this).prop('checked', true);
+            }
+        });
+    }
+
     resetModal() {
         this.editNameField.val('');
         this.saveButton.show();
@@ -113,11 +155,11 @@ export default class PermissionsManager {
         })
 
         this.saveButton.on('click', function () {
-            self.callAjax('POST','create');
+            self.callAjax('POST', 'create');
         });
 
         this.updateButton.on('click', function () {
-            self.callAjax('PUT','update');
+            self.callAjax('PUT', 'update');
         });
 
         this.deleteButtons.on('click', function (evt) {
@@ -126,7 +168,7 @@ export default class PermissionsManager {
             let deleteId = $(this).attr('data-delete');
             let name = $(this).attr('data-name');
             if (confirm('Are you sure you want to delete "' + name + '"?')) {
-                self.callAjax('DELETE','delete','id=' + deleteId);
+                self.callAjax('DELETE', 'delete', 'id=' + deleteId);
             }
 
         });

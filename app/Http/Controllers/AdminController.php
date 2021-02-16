@@ -22,10 +22,12 @@ class AdminController extends Controller
     public function roles()
     {
         $roles = Role::all();
+        $permissions = Permission::all();
 
         return view('roles.index')
             ->with('action', '/api/roles/')
             ->with('roles', $roles)
+            ->with('permissions', $permissions)
             ->with('token', $this->authService->getAuthToken());
     }
 

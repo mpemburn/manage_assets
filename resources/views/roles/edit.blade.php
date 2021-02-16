@@ -12,6 +12,16 @@
                             {{ Form::label('name', 'Role Name:') }}
                             {{ Form::text('name', null, ['class' => 'form-control']) }}
                         </div>
+                        <div class="form-group font-bold" id="permissions_for_role">
+                            Permissions:
+                            <div class="border-solid border-gray-300 border-2 overflow-scroll">
+                                <ul class="p-4">
+                                    @foreach($permissions as $permission)
+                                        <li><input data-type="permission" type="checkbox" name="permission[]" value="{!! $permission->name !!}"> {!! $permission->name !!}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </section>
