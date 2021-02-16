@@ -1,13 +1,10 @@
 <?php
 
+use App\Helpers\DebugHelper;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\InventoryController;
-use App\Models\User;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,13 +38,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/user_roles', AdminController::class . '@userRoles')->name('user_roles');
 
     Route::get('/test', function () {
-        /** @var User $user */
-        $user = User::find(3);
-        $roles = $user->roles();
-
-
-//        !d($roles->pluck('name'));
-
+        DebugHelper::testPermissions();
     });
 });
 
