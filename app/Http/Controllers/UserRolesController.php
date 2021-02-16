@@ -18,6 +18,6 @@ class UserRolesController extends Controller
 
     public function edit(Request $request)
     {
-        $this->userRolesService->edit($request);
+        return $this->userRolesService->edit($request);
     }
 }

@@ -13,6 +13,7 @@ export default class UserRolesManager {
         this.editorPermissionCheckboxes = $('[data-type="permission"]');
         this.saveButton = $('#save_user_roles');
         this.apiAction = $('#modal_form').attr('action');
+        this.errorMessage = $('#user_roles_error');
 
         if (options.modal) {
             this.modal = options.modal;
@@ -107,12 +108,11 @@ export default class UserRolesManager {
                     document.location.reload();
                 },
                 error: function (data) {
-                    let foo = 'bar';
-                    // self.errorMessage.html(data.responseJSON.error)
-                    //     .removeClass('opacity-0')
-                    //     .fadeOut(5000, function () {
-                    //         $(this).addClass('opacity-0').show();
-                    //     });
+                    self.errorMessage.html(data.responseJSON.error)
+                        .removeClass('opacity-0')
+                        .fadeOut(5000, function () {
+                            $(this).addClass('opacity-0').show();
+                        });
                 }
             });
         })

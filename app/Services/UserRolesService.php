@@ -8,15 +8,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
+use Spatie\Permission\Exceptions\RoleDoesNotExist;
 use Spatie\Permission\Models\Permission;
 
 class UserRolesService
 {
-    protected string $errorMessage = 'You were expecting maybe...';
+    public const USER_NOT_FOUND_ERROR = 'This user was not found in the system';
+
+    protected ?string $errorMessage = null;
 
     protected function hasError(): bool
     {
-        return !empty($this->errorMessage);
+        return ! empty($this->errorMessage);
     }
 
     public function edit(Request $request): JsonResponse
@@ -24,8 +28,12 @@ class UserRolesService
         $userId = $request->get('user_id');
         $user = User::find($userId);
 
-        $this->processRoles($user, $request);
-        $this->processPermissions($user, $request);
+        if ($user) {
+            $this->processRoles($user, $request);
+            $this->processPermissions($user, $request);
+        } else {
+            $this->errorMessage = self::USER_NOT_FOUND_ERROR;
+        }
 
         if ($this->hasError()) {
             return response()->json(['error' => $this->errorMessage], 400);
@@ -56,8 +64,12 @@ class UserRolesService
     {
         $toBeAdded = $rolesFromEditor->diff($currentUserRoles);
         if ($toBeAdded->isNotEmpty()) {
-            $toBeAdded->values()->each(static function (string $role) use ($user) {
-                $user->assignRole($role);
+            $toBeAdded->values()->each(function (string $role) use ($user) {
+                try {
+                    $user->assignRole($role);
+                } catch (RoleDoesNotExist $e) {
+                    $this->errorMessage = $e->getMessage();
+                }
             });
         }
     }
@@ -66,8 +78,12 @@ class UserRolesService
     {
         $toBeRemoved = $currentUserRoles->diff($rolesFromEditor);
         if ($toBeRemoved->isNotEmpty()) {
-            $toBeRemoved->values()->each(static function (string $role) use ($user) {
-                $user->removeRole($role);
+            $toBeRemoved->values()->each(function (string $role) use ($user) {
+                try {
+                    $user->removeRole($role);
+                } catch (RoleDoesNotExist $e) {
+                    $this->errorMessage = $e->getMessage();
+                }
             });
         }
     }
@@ -76,8 +92,12 @@ class UserRolesService
     {
         $toBeAdded = $permissionsFromEditor->diff($currentUserPermissions);
         if ($toBeAdded->isNotEmpty()) {
-            $toBeAdded->values()->each(static function (string $permission) use ($user) {
-                $user->givePermissionTo($permission);
+            $toBeAdded->values()->each(function (string $permission) use ($user) {
+                try {
+                    $user->givePermissionTo($permission);
+                } catch (PermissionDoesNotExist $e) {
+                    $this->errorMessage = $e->getMessage();
+                }
             });
         }
     }
@@ -86,8 +106,12 @@ class UserRolesService
     {
         $toBeRemoved = $currentUserPermissions->diff($permissionsFromEditor);
         if ($toBeRemoved->isNotEmpty()) {
-            $toBeRemoved->values()->each(static function (string $permission) use ($user) {
-                $user->revokePermissionTo($permission);
+            $toBeRemoved->values()->each(function (string $permission) use ($user) {
+                try {
+                    $user->revokePermissionTo($permission);
+                } catch (PermissionDoesNotExist $e) {
+                    $this->errorMessage = $e->getMessage();
+                }
             });
         }
     }
@@ -108,18 +132,4 @@ class UserRolesService
             return $item->name;
         });
     }
-
-    protected function handleValidation(Request $request, array $rules): bool
-    {
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            $this->errorMessage = $validator->errors()->first();
-
-            return false;
-        }
-
-        return true;
-    }
-
-
 }
