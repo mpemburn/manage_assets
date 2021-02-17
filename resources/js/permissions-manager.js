@@ -157,7 +157,13 @@ export default class PermissionsManager {
         });
 
         this.editNameField.on('keyup', function (evt) {
-            self.editNameHasChanged = ($(this).val() !== self.currentNameValue);
+            if (self.editEntityIdField.val() === '0') {
+                return;
+            }
+
+            let value = $(this).val();
+
+            self.editNameHasChanged = (value !== self.currentNameValue);
 
             if (self.editNameHasChanged || self.rolePermissionsChanged) {
                 self.updateButton.prop('disabled', '');
