@@ -52,6 +52,11 @@ class PermissionsCrudService
                 $this->errorMessage = $e->getMessage();
                 Log::debug($this->errorMessage);
             }
+
+            if ($request->has('role_permission')) {
+                $role = Role::find($modelId);
+                $this->processPermissions($role, $request);
+            }
         }
 
         if ($this->hasError()) {

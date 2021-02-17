@@ -36,6 +36,34 @@ class UserRolesFeatureTest extends TestCase
         $this->assertDatabaseHas((new Role())->getTable(), $attributes);
     }
 
+    public function test_can_create_role_with_permissions(): void
+    {
+        $permission = (new PermissionFactory())->create();
+        $roleName = $this->faker->word;
+        $attributes = [
+            'name' => $roleName,
+            'role_permission' => [$permission->name]
+        ];
+
+        // Create new role and permission
+        $response = $this->post('/api/roles/create', $attributes);
+        $response->assertStatus(200);
+
+        // Get permissions associated with role
+        $response = $this->get('/api/roles/permissions?role_name=' . $roleName);
+        $response->assertStatus(200);
+        // Test for correct response
+        $response->assertJsonFragment([
+            'success' => true,
+            'permissions' => [
+                0 => $permission->name
+            ]
+        ]);
+
+        // Make sure permission exists in database
+        $this->assertDatabaseHas((new Permission())->getTable(), ['name' => $permission->name]);
+    }
+
     public function test_can_update_role_with_permissions(): void
     {
         $roleName = $this->faker->word;
