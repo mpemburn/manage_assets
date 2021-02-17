@@ -36,6 +36,8 @@ class PermissionsCrudService
 
     public function create(Request $request, Model $model): JsonResponse
     {
+        $modelId = null;
+
         if ($this->handleValidation($request, [
             'name' => ['required', 'unique:' . $model->getTable(), 'max:255']
         ])) {
@@ -44,6 +46,7 @@ class PermissionsCrudService
                 $model->name = $name;
                 $model->guard_name = 'web';
                 $model->save();
+                $modelId = $model->id;
             } catch (\Exception $e) {
                 $this->errorMessage = $e->getMessage();
                 Log::debug($this->errorMessage);
@@ -54,7 +57,7 @@ class PermissionsCrudService
             return response()->json(['error' => $this->errorMessage], 400);
         }
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'id' => $modelId]);
     }
 
     public function update(Request $request, Model $model): JsonResponse
