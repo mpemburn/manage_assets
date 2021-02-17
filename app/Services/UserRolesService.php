@@ -57,7 +57,7 @@ class UserRolesService
         $rolesFromEditor = $this->getValuesFromEditorCheckboxes($request, 'role');
 
         $this->addRoles($user, $currentUserRoles, $rolesFromEditor);
-        $this->removRoles($user, $currentUserRoles, $rolesFromEditor);
+        $this->removeRoles($user, $currentUserRoles, $rolesFromEditor);
     }
 
     protected function processPermissions(User $user, Request $request): void
@@ -83,7 +83,7 @@ class UserRolesService
         }
     }
 
-    protected function removRoles(User $user, $currentUserRoles, $rolesFromEditor): void
+    protected function removeRoles(User $user, $currentUserRoles, $rolesFromEditor): void
     {
         $toBeRemoved = $currentUserRoles->diff($rolesFromEditor);
         if ($toBeRemoved->isNotEmpty()) {

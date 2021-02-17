@@ -22,7 +22,7 @@ export default class PermissionsManager {
         this.editEntityIdField = $('input[name="id"]');
         this.editNameField = $('input[name="name"]');
         this.editNameHasChanged = false;
-        this.editRolePermission = $('input[data-type="role_permission"]');
+        this.editRolePermissions = $('input[data-type="role_permission"]');
         this.rolePermissionSavedState = {};
         this.rolePermissionsChanged = false;
         this.currentNameValue = null;
@@ -124,8 +124,7 @@ export default class PermissionsManager {
 
         this.permissions = response.permissions;
 
-        let editorCheckboxes = $('input[data-type="role_permission"]');
-        editorCheckboxes.each(function () {
+        this.editRolePermissions.each(function () {
             let state = 'off';
             if ($.inArray($(this).val(), self.permissions) !== -1) {
                 $(this).prop('checked', true);
@@ -140,6 +139,9 @@ export default class PermissionsManager {
         this.saveButton.show();
         this.updateButton.hide();
         this.updateButton.prop('disabled', 'disabled');
+        this.editRolePermissions.each(function () {
+            $(this).prop('checked', false);
+        });
     }
 
     addEventListeners() {
@@ -165,7 +167,7 @@ export default class PermissionsManager {
             self.nameCaution.toggle(self.editNameHasChanged);
         })
 
-        this.editRolePermission.on('change', function () {
+        this.editRolePermissions.on('change', function () {
             let value = $(this).val();
             let state = (this.checked) ? 'on' : 'off';
             self.rolePermissionsChanged = (self.rolePermissionSavedState[value] !== state);
