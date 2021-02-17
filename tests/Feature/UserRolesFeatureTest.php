@@ -2,9 +2,12 @@
 
 namespace Tests\Feature;
 
+use Database\Factories\PermissionFactory;
 use Database\Seeders\MemberSeeder;
 use Faker\Factory;
 use Faker\Generator;
+use Illuminate\Testing\TestResponse;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 use Spatie\Permission\Models\Role;
 
@@ -31,6 +34,36 @@ class UserRolesFeatureTest extends TestCase
         $response->assertStatus(200);
 
         $this->assertDatabaseHas((new Role())->getTable(), $attributes);
+    }
+
+    public function test_can_update_role_with_permissions(): void
+    {
+        $roleName = $this->faker->word;
+        $attributes = [
+            'name' => $roleName
+        ];
+
+        // Create new role and permission
+        $response = $this->post('/api/roles/create', $attributes);
+        $permission = (new PermissionFactory())->create();
+
+        $attributes = [
+            'id' => $response->json('id'),
+            'name' => $roleName,
+            'role_permission' => [$permission->name]
+        ];
+
+        // Attach role to permission
+        $response = $this->put('/api/roles/update', $attributes);
+        $response->assertStatus(200);
+
+        // Get permissions associated with role
+        $response = $this->get('/api/roles/permissions?role_name=' . $roleName);
+        $response->assertStatus(200);
+
+        // Make sure permission exists in database
+        $this->assertDatabaseHas((new Permission())->getTable(), ['name' => $permission->name]);
+
     }
 
     public function test_can_update_role(): void

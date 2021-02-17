@@ -37,6 +37,7 @@ class PermissionsCrudService
     public function create(Request $request, Model $model): JsonResponse
     {
         $modelId = null;
+        $name = null;
 
         if ($this->handleValidation($request, [
             'name' => ['required', 'unique:' . $model->getTable(), 'max:255']
@@ -57,7 +58,11 @@ class PermissionsCrudService
             return response()->json(['error' => $this->errorMessage], 400);
         }
 
-        return response()->json(['success' => true, 'id' => $modelId]);
+        return response()->json([
+            'success' => true,
+            'id' => $modelId,
+            'name' => $name
+        ]);
     }
 
     public function update(Request $request, Model $model): JsonResponse
@@ -114,7 +119,9 @@ class PermissionsCrudService
         $permissionsFromEditor = $this->getPermissionsFromEditorCheckboxes($request);
 
         $this->addPermissions($role, $permissionsFromEditor, $currentUserPermissions);
-        $this->removePermissions($role, $permissionsFromEditor, $currentUserPermissions);
+        if ($currentUserPermissions->isNotEmpty()) {
+            $this->removePermissions($role, $permissionsFromEditor, $currentUserPermissions);
+        }
     }
 
     protected function getCurrentRolePermissions(Role $role): Collection

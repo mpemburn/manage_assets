@@ -12,12 +12,13 @@ class RolesService
     public function getPermissionsForRole(Request $request): JsonResponse
     {
         $roleName = $request->get('role_name');
+        !d($roleName);
         $role = Role::findByName($roleName, 'web');
         $permissions = [];
-        $role->getAllPermissions()->each(static function (Permission $permission) use (&$permissions) {
-            $permissions[] = $permission->name;
-        });
-
+//        $role->getAllPermissions()->each(static function (Permission $permission) use (&$permissions) {
+//            $permissions[] = $permission->name;
+//        });
+//
         return response()->json(['success' => true, 'permissions' => $permissions]);
     }
 }
