@@ -8,9 +8,13 @@
                 <form id="permission_edit_form" action="{!! $action !!}">
                     <div class="grid grid-cols-1 md:grid-cols-2">
                         <div class="form-group font-bold">
+                            <div>Permission Name:</div>
                             {{ Form::hidden('id', 0) }}
-                            {{ Form::label('name', 'Permission Name:') }}
                             {{ Form::text('name', null, ['class' => 'form-control']) }}
+                            <div id="name_caution" class="text-red-600 font-normal hidden">
+                                CAUTION: Changing the <b>Permission Name</b><br>may affect existing permissions.
+                            </div>
+
                         </div>
                     </div>
                 </form>

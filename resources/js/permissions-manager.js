@@ -21,8 +21,11 @@ export default class PermissionsManager {
         this.currentOperation = '';
         this.editEntityIdField = $('input[name="id"]');
         this.editNameField = $('input[name="name"]');
+        this.editRolePermission = $('input[data-type="role_permission"]');
+        this.rolePermissionSavedState = {};
         this.currentNameValue = null;
         this.errorMessage = $('#' + context + '_error');
+        this.nameCaution = $('#name_caution');
         this.permissionsWrapper = $('#permissions_for_role').find('ul');
 
         // Modal is added in app.js
@@ -119,11 +122,14 @@ export default class PermissionsManager {
 
         this.permissions = response.permissions;
 
-        let editorCheckboxes = $('input[data-type="permission"]');
+        let editorCheckboxes = $('input[data-type="role_permission"]');
         editorCheckboxes.each(function () {
+            let state = 'off';
             if ($.inArray($(this).val(), self.permissions) !== -1) {
                 $(this).prop('checked', true);
+                state = 'on';
             }
+            self.rolePermissionSavedState[$(this).val()] = state;
         });
     }
 
@@ -149,8 +155,20 @@ export default class PermissionsManager {
         this.editNameField.on('keyup', function (evt) {
             if ($(this).val() === self.currentNameValue) {
                 self.updateButton.prop('disabled', 'disabled');
+                self.nameCaution.hide();
             } else {
                 self.updateButton.prop('disabled', '');
+                self.nameCaution.show();
+            }
+        })
+
+        this.editRolePermission.on('change', function () {
+            let value = $(this).val();
+            let state = (this.checked) ? 'on' : 'off';
+            if (self.rolePermissionSavedState[value] !== state) {
+                self.updateButton.prop('disabled', '');
+            } else {
+                self.updateButton.prop('disabled', 'disabled');
             }
         })
 
