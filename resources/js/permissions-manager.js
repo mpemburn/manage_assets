@@ -21,8 +21,10 @@ export default class PermissionsManager {
         this.currentOperation = '';
         this.editEntityIdField = $('input[name="id"]');
         this.editNameField = $('input[name="name"]');
+        this.editNameHasChanged = false;
         this.editRolePermission = $('input[data-type="role_permission"]');
         this.rolePermissionSavedState = {};
+        this.rolePermissionsChanged = false;
         this.currentNameValue = null;
         this.errorMessage = $('#' + context + '_error');
         this.nameCaution = $('#name_caution');
@@ -153,19 +155,22 @@ export default class PermissionsManager {
         });
 
         this.editNameField.on('keyup', function (evt) {
-            if ($(this).val() === self.currentNameValue) {
-                self.updateButton.prop('disabled', 'disabled');
-                self.nameCaution.hide();
-            } else {
+            self.editNameHasChanged = ($(this).val() !== self.currentNameValue);
+
+            if (self.editNameHasChanged || self.rolePermissionsChanged) {
                 self.updateButton.prop('disabled', '');
-                self.nameCaution.show();
+            } else {
+                self.updateButton.prop('disabled', 'disabled');
             }
+            self.nameCaution.toggle(self.editNameHasChanged);
         })
 
         this.editRolePermission.on('change', function () {
             let value = $(this).val();
             let state = (this.checked) ? 'on' : 'off';
-            if (self.rolePermissionSavedState[value] !== state) {
+            self.rolePermissionsChanged = (self.rolePermissionSavedState[value] !== state);
+
+            if (self.rolePermissionsChanged || self.editNameHasChanged) {
                 self.updateButton.prop('disabled', '');
             } else {
                 self.updateButton.prop('disabled', 'disabled');
