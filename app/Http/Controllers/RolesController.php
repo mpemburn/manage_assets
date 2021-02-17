@@ -3,19 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Services\PermissionsCrudService;
+use App\Services\RolesService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RolesController extends Controller
 {
     protected PermissionsCrudService $crudService;
+    protected RolesService $rolesService;
 
-    public function __construct(PermissionsCrudService $rolesService)
+    public function __construct(PermissionsCrudService $crudService, RolesService $rolesService)
     {
-        $this->crudService = $rolesService;
+        $this->crudService = $crudService;
+        $this->rolesService = $rolesService;
     }
 
     public function create(Request $request): JsonResponse
@@ -35,13 +36,6 @@ class RolesController extends Controller
 
     public function getPermissions(Request $request): JsonResponse
     {
-        $roleName = $request->get('role_name');
-        $role = Role::findByName($roleName, 'web');
-        $permissions = [];
-        $role->getAllPermissions()->each(static function (Permission $permission) use (&$permissions) {
-            $permissions[] = $permission->name;
-        });
-        
-        return response()->json(['success' => true, 'permissions' => $permissions]);
+        return $this->rolesService->getPermissionsForRole($request);
     }
 }
