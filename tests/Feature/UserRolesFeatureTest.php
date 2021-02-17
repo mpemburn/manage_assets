@@ -35,13 +35,15 @@ class UserRolesFeatureTest extends TestCase
 
     public function test_can_update_role(): void
     {
-
         $attributes = [
             'name' => $this->faker->word
         ];
         $response = $this->post('/api/roles/create', $attributes);
         $response->assertStatus(200);
         $roleId = $response->json('id');
+
+        $attributes['id'] = $roleId;
+        $this->assertDatabaseHas((new Role())->getTable(), $attributes);
 
         $newAttributes = [
             'id' => $roleId,
@@ -52,5 +54,23 @@ class UserRolesFeatureTest extends TestCase
         $response->assertStatus(200);
 
         $this->assertDatabaseHas((new Role())->getTable(), $newAttributes);
+    }
+
+    public function test_can_delete_role(): void
+    {
+        $attributes = [
+            'name' => $this->faker->word
+        ];
+        $response = $this->post('/api/roles/create', $attributes);
+        $response->assertStatus(200);
+        $roleId = $response->json('id');
+        $attributes['id'] = $roleId;
+
+        $this->assertDatabaseHas((new Role())->getTable(), $attributes);
+
+        $response = $this->delete('/api/roles/delete', $attributes);
+        $response->assertStatus(200);
+
+        $this->assertDatabaseMissing((new Role())->getTable(), $attributes);
     }
 }
