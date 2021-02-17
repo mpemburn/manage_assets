@@ -130,8 +130,28 @@ export default class PermissionsManager {
                 $(this).prop('checked', true);
                 state = 'on';
             }
+            // Save the state to determine whether the user has changed it
             self.rolePermissionSavedState[$(this).val()] = state;
         });
+    }
+
+    hasRolePermissionsStateChanged() {
+        let self = this;
+
+        this.currentState = {}
+        this.editRolePermissions.each(function () {
+            self.currentState[$(this).val()] = (this.checked) ? 'on' : 'off';
+        });
+
+        let truth = [];
+        for (let key in this.rolePermissionSavedState) {
+            if (this.rolePermissionSavedState.hasOwnProperty(key)) {
+                let savedValue = this.rolePermissionSavedState[key];
+                truth.push(this.currentState[key] === savedValue);
+            }
+        }
+
+        return ($.inArray(false, truth) !== -1);
     }
 
     resetModal() {
@@ -142,6 +162,7 @@ export default class PermissionsManager {
         this.editRolePermissions.each(function () {
             $(this).prop('checked', false);
         });
+        this.rolePermissionSavedState = {};
     }
 
     addEventListeners() {
@@ -176,7 +197,7 @@ export default class PermissionsManager {
         this.editRolePermissions.on('change', function () {
             let value = $(this).val();
             let state = (this.checked) ? 'on' : 'off';
-            self.rolePermissionsChanged = (self.rolePermissionSavedState[value] !== state);
+            self.rolePermissionsChanged = self.hasRolePermissionsStateChanged();
 
             if (self.rolePermissionsChanged || self.editNameHasChanged) {
                 self.updateButton.prop('disabled', '');
