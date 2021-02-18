@@ -13,6 +13,8 @@ export default class UserRolesManager {
         this.editorPermissionCheckboxes = $('[data-type="permission"]');
         this.saveButton = $('#save_user_roles');
         this.apiAction = $('#modal_form').attr('action');
+        this.getAssignedEnpoint = $('[name="get_assigned_endpoint"]').val();
+        this.permissionsAreAssignedMessage = $('#permissions_are_assigned');
         this.errorMessage = $('#user_roles_error');
 
         if (options.modal) {
@@ -40,8 +42,13 @@ export default class UserRolesManager {
         });
         // Uncheck all "Permissions" checkboxes
         this.editorPermissionCheckboxes.each(function () {
-            $(this).prop('checked', false);
+            let checkbox = $(this);
+            let listItem = checkbox.parent();
+            checkbox.prop('checked', false).show();
+            listItem.removeClass('text-gray-400 pl-6');
         });
+
+        this.permissionsAreAssignedMessage.hide();
     }
 
     readRowEntities(row, entityType) {
@@ -52,6 +59,9 @@ export default class UserRolesManager {
         collection.each(function () {
             let entityName = $(this).data('entityName');
             self.selectDialogCheckboxes(self.entityType, entityName);
+            if (self.entityType === 'role') {
+                self.retrievePermissionsOwnedByRole(entityName, true);
+            }
         });
     }
 
@@ -82,6 +92,48 @@ export default class UserRolesManager {
         checkbox.prop('disabled', disabled);
     }
 
+    // Call back end to see if this role has associated permissions
+    retrievePermissionsOwnedByRole(roleName, shouldShow) {
+        let self = this;
+
+        this.shouldShow = shouldShow;
+        $.ajax({
+            url: this.getAssignedEnpoint,
+            type: 'GET',
+            datatype: 'json',
+            data: 'role_name=' + roleName,
+            headers: {
+                'X-CSRF-TOKEN': this.csrf.val(),
+                'Authorization': 'Bearer ' + this.bToken.val()
+            },
+            success: function (response) {
+                self.togglePermissionsOwnedByRole(response, self.shouldShow);
+            },
+            error: function (data) {
+            }
+        });
+    }
+
+    togglePermissionsOwnedByRole(response, shouldShow) {
+        let self = this;
+
+        this.shouldShow = shouldShow;
+        if (response.permissions) {
+            this.assignedPermissions = response.permissions
+            $('input[data-type="permission"]').each(function () {
+                let checkbox = $(this);
+                let listItem = checkbox.parent();
+                if ($.inArray(checkbox.val(), self.assignedPermissions) !== -1) {
+                    // If this permission is already assigned
+                    // hide the checkbox, gray it out, and show message
+                    checkbox.toggle(! self.shouldShow);
+                    listItem.toggleClass('text-gray-400 pl-6', self.shouldShow);
+                    self.permissionsAreAssignedMessage.toggle(self.shouldShow);
+                }
+            });
+        }
+    }
+
     addEventListeners() {
         let self = this;
 
@@ -101,6 +153,10 @@ export default class UserRolesManager {
             self.readRowEntities(row, 'permission')
 
             self.modal.toggleModal();
+        });
+
+        this.editorRoleCheckboxes.on('click', function () {
+            self.retrievePermissionsOwnedByRole($(this).val(), this.checked);
         });
 
         this.saveButton.on('click', function () {

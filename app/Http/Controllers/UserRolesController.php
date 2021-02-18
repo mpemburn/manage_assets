@@ -25,6 +25,7 @@ class UserRolesController extends Controller
 
     public function getAssigned(Request $request): JsonResponse
     {
+        Log::debug('Wha?');
         return $this->userRolesService->getPermissionsAssignedToRole($request);
     }
 }

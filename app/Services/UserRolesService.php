@@ -5,9 +5,6 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 use Spatie\Permission\Exceptions\RoleDoesNotExist;
@@ -17,6 +14,7 @@ use Spatie\Permission\Models\Role;
 class UserRolesService
 {
     public const USER_NOT_FOUND_ERROR = 'This user was not found in the system';
+    public const GET_ASSIGNED_PERMISSIONS_ENDPOINT = '/api/user_roles/assigned';
 
     protected ?string $errorMessage = null;
     protected ValidationService $validator;
@@ -66,7 +64,7 @@ class UserRolesService
             'role_name' => ['required']
         ])) {
             $roleName = $request->get('role_name');
-            $role = Role::findByName($roleName);
+            $role = Role::findByName($roleName, 'web');
 
             $permissions = $role->getAllPermissions()->map(static function (Permission $permission) {
                 return $permission->name;

@@ -50,6 +50,7 @@ class AdminController extends Controller
             ->with('action', '/api/user_roles/')
             ->with('users', $users)
             ->with('currentUserIsAdmin', $this->userRolesService->isCurrentUserAdmin())
+            ->with('getAssignedEnpoint', UserRolesService::GET_ASSIGNED_PERMISSIONS_ENDPOINT)
             ->with('roles', Role::all())
             ->with('permissions', Permission::all())
             ->with('token', $this->authService->getAuthToken());

@@ -10,6 +10,7 @@
                     <input type="hidden" name="user_id">
                     <input type="hidden" name="current_user_id" value="{!! Auth::user()->id !!}">
                     <input type="hidden" name="is_admin" value="{!! $currentUserIsAdmin !!}">
+                    <input type="hidden" name="get_assigned_endpoint" value="{!! $getAssignedEnpoint !!}">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="form-group font-bold overflow-scroll">
                             Roles:
@@ -32,6 +33,7 @@
                                     @endforeach
                                 </ul>
                             </div>
+                            <div id="permissions_are_assigned" class="hidden">NOTE: Grayed permissions are assigned to one or more of this user's Roles.</div>
                         </div>
                     </div>
                 </form>
