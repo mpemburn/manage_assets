@@ -12,12 +12,19 @@ use Illuminate\Support\Collection;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 use Spatie\Permission\Exceptions\RoleDoesNotExist;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserRolesService
 {
     public const USER_NOT_FOUND_ERROR = 'This user was not found in the system';
 
     protected ?string $errorMessage = null;
+    protected ValidationService $validator;
+
+    public function __construct(ValidationService $validationService)
+    {
+        $this->validator = $validationService;
+    }
 
     protected function hasError(): bool
     {
@@ -49,6 +56,28 @@ class UserRolesService
         }
 
         return response()->json(['success' => true]);
+    }
+
+    public function getPermissionsAssignedToRole(Request $request): JsonResponse
+    {
+        $permissions = [];
+
+        if ($this->validator->handle($request, [
+            'role_name' => ['required']
+        ])) {
+            $roleName = $request->get('role_name');
+            $role = Role::findByName($roleName);
+
+            $permissions = $role->getAllPermissions()->map(static function (Permission $permission) {
+                return $permission->name;
+            })->toArray();
+        }
+
+        if ($this->validator->hasError()) {
+            return response()->json(['error' => $this->validator->getMessage()], 400);
+        }
+
+        return response()->json(['success' => true, 'permissions' => $permissions]);
     }
 
     protected function processRoles(User $user, Request $request): void

@@ -41,4 +41,5 @@ Route::middleware('auth:api')->group( function () {
     Route::delete('/permissions/delete', PermissionsController::class . '@delete');
 
     Route::post('/user_roles', UserRolesController::class . '@edit');
+    Route::get('/user_roles/assigned', UserRolesController::class . '@getAssigned');
 });

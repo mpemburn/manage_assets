@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\UserRolesService;
+use App\Services\ValidationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -19,5 +21,10 @@ class UserRolesController extends Controller
     public function edit(Request $request)
     {
         return $this->userRolesService->edit($request);
+    }
+
+    public function getAssigned(Request $request): JsonResponse
+    {
+        return $this->userRolesService->getPermissionsAssignedToRole($request);
     }
 }
