@@ -20,12 +20,12 @@
                 </th>
             </thead>
             @foreach ($permissions as $permission)
-                <tr class="cursor-pointer" id="{!! $permission->id !!}" data-name="{!! $permission->name !!}">
+                <tr class="" id="{!! $permission->id !!}" data-name="{!! $permission->name !!}">
                     <td>
                         {!! $permission->name !!}
                     </td>
                     <td class="dt-right">
-                        <button class="w-20 ml-3 rounded px-3 py-1 bg-green-300 hover:bg-green-700 hover:text-white focus:shadow-outline focus:outline-none">
+                        <button data-edit="{!! $permission->id !!}" class="w-20 ml-3 rounded px-3 py-1 bg-green-300 hover:bg-green-700 hover:text-white focus:shadow-outline focus:outline-none">
                             Edit
                         </button>
                         <button data-delete="{!! $permission->id !!}" data-name="{!! $permission->name !!}"

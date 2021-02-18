@@ -16,16 +16,26 @@
                 Role Name
             </th>
             <th>
+                Permissions
+            </th>
+            <th>
 
             </th>
             </thead>
             @foreach ($roles as $role)
-                <tr class="cursor-pointer" id="{!! $role->id !!}" data-name="{!! $role->name !!}">
+                <tr class="" id="{!! $role->id !!}" data-name="{!! $role->name !!}">
                     <td>
                         {!! $role->name !!}
                     </td>
+                    <td>
+                        <ul>
+                            @foreach($role->permissions()->pluck('name') as $permission)
+                                <li data-type="permission" data-entity-name="{!! $permission !!}" class="list-disc">{!! $permission !!}</li>
+                            @endforeach
+                        </ul>
+                    </td>
                     <td class="dt-right">
-                        <button class="w-20 ml-3 rounded px-3 py-1 bg-green-300 hover:bg-green-700 hover:text-white focus:shadow-outline focus:outline-none">
+                        <button data-edit="{!! $role->id !!}" class="w-20 ml-3 rounded px-3 py-1 bg-green-300 hover:bg-green-700 hover:text-white focus:shadow-outline focus:outline-none">
                             Edit
                         </button>
                         <button data-delete="{!! $role->id !!}" data-name="{!! $role->name !!}"

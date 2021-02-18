@@ -16,6 +16,7 @@ export default class PermissionsManager {
         this.editForm = $('#' + context + '_edit_form');
         this.saveButton = $('#save_' + context + '');
         this.updateButton = $('#update_' + context + '');
+        this.editButtons = $('*[data-edit]');
         this.deleteButtons = $('*[data-delete]');
         this.baseUrl = this.editForm.attr('action');
         this.currentOperation = '';
@@ -171,11 +172,6 @@ export default class PermissionsManager {
             self.resetModal();
         });
 
-        // Get contents of row for editing
-        $('.dataTable').on('click', 'tbody tr', function () {
-            self.openForEdit($(this));
-        });
-
         this.editNameField.on('keyup', function (evt) {
             if (self.editEntityIdField.val() === '0') {
                 return;
@@ -211,6 +207,12 @@ export default class PermissionsManager {
 
         this.updateButton.on('click', function () {
             self.callAjax('PUT', 'update');
+        });
+
+        this.editButtons.on('click', function (evt) {
+            let row = $(this).parent().parent();
+
+            self.openForEdit(row);
         });
 
         this.deleteButtons.on('click', function (evt) {
