@@ -3,13 +3,9 @@
 namespace Tests\Feature;
 
 use Database\Factories\PermissionFactory;
-use Database\Seeders\MemberSeeder;
 use Faker\Factory;
 use Faker\Generator;
-use Illuminate\Testing\TestResponse;
-use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
-use Spatie\Permission\Models\Role;
 
 class UserRolesFeatureTest extends TestCase
 {
@@ -23,20 +19,7 @@ class UserRolesFeatureTest extends TestCase
         $this->refreshDatabase();
     }
 
-    public function test_can_create_new_role(): void
-    {
-        $attributes = [
-            'name' => $this->faker->word
-        ];
-
-        $response = $this->post('/api/roles/create', $attributes);
-
-        $response->assertStatus(200);
-
-        $this->assertDatabaseHas((new Role())->getTable(), $attributes);
-    }
-
-    public function test_can_create_role_with_permissions(): void
+    public function test_can_get_permissions_assigned_to_roles(): void
     {
         $permission = (new PermissionFactory())->create();
         $roleName = $this->faker->word;
@@ -50,9 +33,8 @@ class UserRolesFeatureTest extends TestCase
         $response->assertStatus(200);
 
         // Get permissions associated with role
-        $response = $this->get('/api/roles/permissions?role_name=' . $roleName);
+        $response = $this->get('/api/user_roles/assigned?role_name=' . $roleName);
         $response->assertStatus(200);
-        // Test for correct response
         $response->assertJsonFragment([
             'success' => true,
             'permissions' => [
@@ -60,78 +42,12 @@ class UserRolesFeatureTest extends TestCase
             ]
         ]);
 
-        // Make sure permission exists in database
-        $this->assertDatabaseHas((new Permission())->getTable(), ['name' => $permission->name]);
     }
 
-    public function test_can_update_role_with_permissions(): void
+    public function test_get_permissions_assigned_fails_without_role(): void
     {
-        $roleName = $this->faker->word;
-        $attributes = [
-            'name' => $roleName
-        ];
-
-        // Create new role and permission
-        $response = $this->post('/api/roles/create', $attributes);
-        $permission = (new PermissionFactory())->create();
-
-        $attributes = [
-            'id' => $response->json('id'),
-            'name' => $roleName,
-            'role_permission' => [$permission->name]
-        ];
-
-        // Attach role to permission
-        $response = $this->put('/api/roles/update', $attributes);
-        $response->assertStatus(200);
-
-        // Get permissions associated with role
-        $response = $this->get('/api/roles/permissions?role_name=' . $roleName);
-        $response->assertStatus(200);
-
-        // Make sure permission exists in database
-        $this->assertDatabaseHas((new Permission())->getTable(), ['name' => $permission->name]);
-
-    }
-
-    public function test_can_update_role(): void
-    {
-        $attributes = [
-            'name' => $this->faker->word
-        ];
-        $response = $this->post('/api/roles/create', $attributes);
-        $response->assertStatus(200);
-        $roleId = $response->json('id');
-
-        $attributes['id'] = $roleId;
-        $this->assertDatabaseHas((new Role())->getTable(), $attributes);
-
-        $newAttributes = [
-            'id' => $roleId,
-            'name' => $this->faker->word
-        ];
-
-        $response = $this->put('/api/roles/update', $newAttributes);
-        $response->assertStatus(200);
-
-        $this->assertDatabaseHas((new Role())->getTable(), $newAttributes);
-    }
-
-    public function test_can_delete_role(): void
-    {
-        $attributes = [
-            'name' => $this->faker->word
-        ];
-        $response = $this->post('/api/roles/create', $attributes);
-        $response->assertStatus(200);
-        $roleId = $response->json('id');
-        $attributes['id'] = $roleId;
-
-        $this->assertDatabaseHas((new Role())->getTable(), $attributes);
-
-        $response = $this->delete('/api/roles/delete', $attributes);
-        $response->assertStatus(200);
-
-        $this->assertDatabaseMissing((new Role())->getTable(), $attributes);
+        $roleName = null;
+        $response = $this->get('/api/user_roles/assigned?role_name=' . $roleName);
+        $response->assertStatus(400);
     }
 }
