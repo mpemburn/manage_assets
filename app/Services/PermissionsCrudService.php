@@ -14,24 +14,11 @@ use Spatie\Permission\Models\Role;
 
 class PermissionsCrudService
 {
+    protected ValidationService $validator;
 
-    protected string $errorMessage;
-
-    protected function handleValidation(Request $request, array $rules): bool
+    public function __construct(ValidationService $validationService)
     {
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            $this->errorMessage = $validator->errors()->first();
-
-            return false;
-        }
-
-        return true;
-    }
-
-    protected function hasError(): bool
-    {
-        return !empty($this->errorMessage);
+        $this->validator = $validationService;
     }
 
     public function create(Request $request, Model $model): JsonResponse
@@ -39,7 +26,7 @@ class PermissionsCrudService
         $modelId = null;
         $name = null;
 
-        if ($this->handleValidation($request, [
+        if ($this->validator->handle($request, [
             'name' => ['required', 'unique:' . $model->getTable(), 'max:255']
         ])) {
             $name = $request->get('name');
@@ -49,8 +36,8 @@ class PermissionsCrudService
                 $model->save();
                 $modelId = $model->id;
             } catch (\Exception $e) {
-                $this->errorMessage = $e->getMessage();
-                Log::debug($this->errorMessage);
+                $this->validator->addError($e->getMessage());
+                Log::debug($e->getMessage());
             }
 
             if ($request->has('role_permission')) {
@@ -59,8 +46,8 @@ class PermissionsCrudService
             }
         }
 
-        if ($this->hasError()) {
-            return response()->json(['error' => $this->errorMessage], 400);
+        if ($this->validator->hasError()) {
+            return response()->json(['error' => $this->validator->getMessage()], 400);
         }
 
         return response()->json([
@@ -72,12 +59,12 @@ class PermissionsCrudService
 
     public function update(Request $request, Model $model): JsonResponse
     {
-        if ($this->handleValidation($request, [
+        if ($this->validator->handle($request, [
             'name' => ['required', 'max:255']
         ])) {
             $model = $this->find($request, $model);
             if (! $model) {
-                return response()->json(['error' => $this->errorMessage], 400);
+                return response()->json(['error' => $this->validator->getMessage()], 400);
             }
             try {
                 $model->update([
@@ -86,8 +73,8 @@ class PermissionsCrudService
                 ]);
                 $model->save();
             } catch (\Exception $e) {
-                $this->errorMessage = $e->getMessage();
-                Log::debug($this->errorMessage);
+                $this->validator->addError($e->getMessage());
+                Log::debug($e->getMessage());
             }
 
             if ($request->has('role_permission')) {
@@ -96,8 +83,8 @@ class PermissionsCrudService
             }
         }
 
-        if ($this->hasError()) {
-            return response()->json(['error' => $this->errorMessage], 400);
+        if ($this->validator->hasError()) {
+            return response()->json(['error' => $this->validator->getMessage()], 400);
         }
 
         return response()->json(['success' => true]);
@@ -107,7 +94,7 @@ class PermissionsCrudService
     {
         $model = $this->find($request, $model);
         if (!$model) {
-            return response()->json(['error' => $this->errorMessage], 400);
+            return response()->json(['error' => $this->validator->getMessage()], 400);
         }
         try {
             $model->delete();
@@ -149,7 +136,8 @@ class PermissionsCrudService
                 try {
                     $role->givePermissionTo($permission);
                 } catch (PermissionDoesNotExist $e) {
-                    $this->errorMessage = $e->getMessage();
+                    $this->validator->addError($e->getMessage());
+                    Log::debug($e->getMessage());
                 }
             });
         }
@@ -163,7 +151,8 @@ class PermissionsCrudService
                 try {
                     $role->revokePermissionTo($permission);
                 } catch (PermissionDoesNotExist $e) {
-                    $this->errorMessage = $e->getMessage();
+                    $this->validator->addError($e->getMessage());
+                    Log::debug($e->getMessage());
                 }
             });
         }
@@ -177,8 +166,8 @@ class PermissionsCrudService
         try {
             $model = $model->findById($modelId, 'web');
         } catch (\Exception $e) {
-            $this->errorMessage = $e->getMessage();
-            Log::debug($this->errorMessage);
+            $this->validator->addError($e->getMessage());
+            Log::debug($e->getMessage());
 
             return null;
         }
