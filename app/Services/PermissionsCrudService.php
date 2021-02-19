@@ -95,7 +95,12 @@ class PermissionsCrudService
 
     protected function find(Request $request, UiInterface $model): ?UiInterface
     {
+        $class = get_class($model);
         $modelId = $request->get('id');
+        if (! $modelId) {
+            $this->validator->addError($class . ' not found by ID');
+            return null;
+        }
 
         try {
             $model = $model->findById($modelId, 'web');
