@@ -26,9 +26,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/login', AuthController::class . '@login')->name('login');
 Route::get('/store', ReportController::class . '@storeReport');
 
-Route::post('/roles/create', RolesController::class . '@create');
-
 Route::middleware('auth:api')->group( function () {
+    Route::post('/roles/create', RolesController::class . '@create');
     Route::post('/receive_files', ReportController::class . '@receive')->name('receive');
     Route::post('/receive_inventory', InventoryController::class . '@receive');
 
