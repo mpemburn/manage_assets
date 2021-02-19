@@ -23,3 +23,4 @@ yarn-error.log
 /public/js
 /public/mix-manifest.json
 /app/Helpers/DebugHelper.php
+/resources/.DS_Store
