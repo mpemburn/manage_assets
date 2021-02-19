@@ -97,7 +97,6 @@ class PermissionsCrudService
     {
         $modelId = $request->get('id');
 
-        Log::debug($modelId);
         try {
             $model = $model->findById($modelId, 'web');
         } catch (\Exception $e) {
