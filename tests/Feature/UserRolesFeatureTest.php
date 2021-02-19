@@ -28,7 +28,7 @@ class UserRolesFeatureTest extends TestCase
             'role_permission' => [$permission->name]
         ];
 
-        // Create new role and permission
+        // Create new role and attach permission
         $response = $this->post('/api/roles/create', $attributes);
         $response->assertStatus(200);
 

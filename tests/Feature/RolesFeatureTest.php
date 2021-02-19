@@ -79,7 +79,7 @@ class RolesFeatureTest extends TestCase
             'role_permission' => [$permission->name]
         ];
 
-        // Attach role to permission
+        // Attach permission to role
         $response = $this->put('/api/roles/update', $attributes);
         $response->assertStatus(200);
 
@@ -90,6 +90,40 @@ class RolesFeatureTest extends TestCase
         // Make sure permission exists in database
         $this->assertDatabaseHas((new Permission())->getTable(), ['name' => $permission->name]);
 
+    }
+
+    public function test_can_remove_permissions_from_role(): void
+    {
+        $roleName = $this->faker->word;
+        $attributes = [
+            'name' => $roleName
+        ];
+
+        // Create new role and permissions
+        $response = $this->post('/api/roles/create', $attributes);
+        $permissions = (new PermissionFactory())->count(4)->create();
+        $roleId = $response->json('id');
+        $permissionNames = $permissions->map(static function ($item) {
+            return $item->name;
+        });
+        $attributes = [
+            'id' => $roleId,
+            'name' => $roleName,
+            'role_permission' => $permissionNames->toArray()
+        ];
+        // Attach role to permission
+        $response = $this->put('/api/roles/update', $attributes);
+        $response->assertStatus(200);
+
+        // Detach a permission from the role
+        $permissionNames->shift();
+        $updatedAttributes = [
+            'id' => $roleId,
+            'name' => $roleName,
+            'role_permission' => $permissionNames->toArray()
+        ];
+        $response = $this->put('/api/roles/update', $updatedAttributes);
+        $response->assertStatus(200);
     }
 
     public function test_can_update_role(): void
