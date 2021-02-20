@@ -1,6 +1,7 @@
+import Comparator from "./comparator";
 import RequestAjax from "./request-ajax";
-import FileUploader from './file-uploader';
 import Modal from './modal';
+import FileUploader from './file-uploader';
 import PermissionsManager from './permissions-manager';
 import UserRolesManager from './user-roles-manager';
 import DatatablesManager from './datatables-manager';
@@ -12,6 +13,7 @@ require('./bootstrap');
 require('alpinejs');
 
 let ajax = new RequestAjax();
+let comparator = new Comparator();
 let modal = new Modal();
 let dtManager = new DatatablesManager();
 
@@ -20,15 +22,17 @@ new FileUploader({
 });
 
 new PermissionsManager({
+    comparator: comparator,
+    ajax: ajax,
     modal: modal,
-    dtManager: dtManager,
-    ajax: ajax
+    dtManager: dtManager
 });
 
 new UserRolesManager({
+    comparator: comparator,
+    ajax: ajax,
     modal: modal,
-    dtManager: dtManager,
-    ajax: ajax
+    dtManager: dtManager
 });
 
 new Inventory({

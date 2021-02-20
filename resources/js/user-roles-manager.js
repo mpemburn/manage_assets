@@ -18,26 +18,9 @@ export default class UserRolesManager {
         this.permissionsAreAssignedMessage = $('#permissions_are_assigned');
         this.errorMessage = $('#user_roles_error');
 
-        if (options.modal) {
-            this.modal = options.modal;
-            this.resetModal();
-        }
-
-        if (options.ajax) {
-            this.ajax = options.ajax;
-            // Set "this" (i.e., UserRolesManager) to be the caller
-            this.ajax.fromCaller(this);
-            this.ajax.withErrorMessageField(this.errorMessage);
-        }
-
-        if (options.dtManager) {
-            options.dtManager.run('user_roles_table', {
-                pageLength: 25,
-                lengthMenu: [10, 25, 50, 75, 100],
-            });
-        }
-
         if (this.editForm.is('*')) {
+            // Setup options passed in via app.js
+            this.setOptions(options);
             this.addEventListeners();
         }
     }
@@ -126,7 +109,7 @@ export default class UserRolesManager {
                 if ($.inArray(checkbox.val(), self.assignedPermissions) !== -1) {
                     // If this permission is already assigned
                     // hide the checkbox, gray it out, and show message
-                    checkbox.toggle(! self.shouldShow);
+                    checkbox.toggle(!self.shouldShow);
                     listItem.toggleClass('text-gray-400 pl-6', self.shouldShow);
                     self.permissionsAreAssignedMessage.toggle(self.shouldShow);
                 }
@@ -139,6 +122,32 @@ export default class UserRolesManager {
         caller.modal.toggleModal();
 
         document.location.reload();
+    }
+
+    setOptions(options) {
+        if (options.comparator) {
+            this.comparator = options.comparator;
+            this.resetModal();
+        }
+
+        if (options.modal) {
+            this.modal = options.modal;
+            this.resetModal();
+        }
+
+        if (options.ajax) {
+            this.ajax = options.ajax;
+            // Set "this" (i.e., PermissionsManager) to be the caller
+            this.ajax.fromCaller(this);
+            this.ajax.withErrorMessageField(this.errorMessage);
+        }
+
+        if (options.dtManager) {
+            options.dtManager.run('user_roles_table', {
+                pageLength: 25,
+                lengthMenu: [10, 25, 50, 75, 100],
+            });
+        }
     }
 
     addEventListeners() {

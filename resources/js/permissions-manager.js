@@ -32,27 +32,9 @@ export default class PermissionsManager {
         this.nameCaution = $('#name_caution');
         this.permissionsWrapper = $('#permissions_for_role').find('ul');
 
-        // Modal is added in app.js
-        if (options.modal) {
-            this.modal = options.modal;
-            this.resetModal();
-        }
-
-        if (options.ajax) {
-            this.ajax = options.ajax;
-            // Set "this" (i.e., PermissionsManager) to be the caller
-            this.ajax.fromCaller(this);
-            this.ajax.withErrorMessageField(this.errorMessage);
-        }
-
-        if (options.dtManager) {
-            options.dtManager.run(context + '-table', {
-                pageLength: 25,
-                lengthMenu: [10, 25, 50, 75, 100],
-            });
-        }
-
         if (this.editForm.is('*')) {
+            // Setup options passed in via app.js
+            this.setOptions(options);
             this.addEventListeners();
         }
     }
@@ -127,15 +109,16 @@ export default class PermissionsManager {
             self.currentState[$(this).val()] = (this.checked) ? 'on' : 'off';
         });
 
-        let truth = [];
-        for (let key in this.rolePermissionSavedState) {
-            if (this.rolePermissionSavedState.hasOwnProperty(key)) {
-                let savedValue = this.rolePermissionSavedState[key];
-                truth.push(this.currentState[key] === savedValue);
-            }
-        }
-
-        return ($.inArray(false, truth) !== -1);
+        return this.comparator.compare(this.rolePermissionSavedState, this.currentState);
+        // let truth = [];
+        // for (let key in this.rolePermissionSavedState) {
+        //     if (this.rolePermissionSavedState.hasOwnProperty(key)) {
+        //         let savedValue = this.rolePermissionSavedState[key];
+        //         truth.push(this.currentState[key] === savedValue);
+        //     }
+        // }
+        //
+        // return ($.inArray(false, truth) !== -1);
     }
 
     resetModal() {
@@ -147,6 +130,32 @@ export default class PermissionsManager {
             $(this).prop('checked', false);
         });
         this.rolePermissionSavedState = {};
+    }
+
+    setOptions(options) {
+        if (options.comparator) {
+            this.comparator = options.comparator;
+            this.resetModal();
+        }
+
+        if (options.modal) {
+            this.modal = options.modal;
+            this.resetModal();
+        }
+
+        if (options.ajax) {
+            this.ajax = options.ajax;
+            // Set "this" (i.e., PermissionsManager) to be the caller
+            this.ajax.fromCaller(this);
+            this.ajax.withErrorMessageField(this.errorMessage);
+        }
+
+        if (options.dtManager) {
+            options.dtManager.run(context + '-table', {
+                pageLength: 25,
+                lengthMenu: [10, 25, 50, 75, 100],
+            });
+        }
     }
 
     addEventListeners() {

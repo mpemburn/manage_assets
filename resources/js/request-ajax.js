@@ -64,8 +64,8 @@ export default class RequestAjax {
             },
             success: function (response) {
                 if (typeof self.successCallback === 'function') {
-                    self.successCallback.apply(self.extraArgs)
-                    self.successCallback(self.caller, response);
+                    self.successCallback(self.caller, response, ...self.extraArgs);
+                    self.extraArgs = [];
                 }
             },
             error: function (response) {
@@ -79,6 +79,7 @@ export default class RequestAjax {
                             $(this).addClass('opacity-0').show();
                         });
                 }
+                self.extraArgs = [];
             }
         });
     }
