@@ -14,6 +14,8 @@ export default class UserRolesManager {
         this.editorPermissionCheckboxes = $('input[data-type="permission"]');
         this.editorRoleSavedState = {};
         this.editorPermissionSavedState = {};
+        this.editorRoleCheckboxesChanged = false;
+        this.editorPermissionCheckboxesChanged = false;
         this.saveButton = $('#save_user_roles');
         this.apiAction = $('#modal_form').attr('action');
         this.getAssignedEnpoint = $('[name="get_assigned_endpoint"]').val();
@@ -140,7 +142,14 @@ export default class UserRolesManager {
             // Save the state to determine whether the user has changed it
             self.stateObject[$(this).val()] = state;
         });
-   }
+
+        return this.stateObject;
+    }
+
+    shouldEnableSave() {
+        let shouldEnable = ! (this.editorRoleCheckboxesChanged || this.editorPermissionCheckboxesChanged);
+        this.saveButton.prop('disabled', shouldEnable);
+    }
 
     setOptions(options) {
         if (options.comparator) {
@@ -194,6 +203,18 @@ export default class UserRolesManager {
 
         this.editorRoleCheckboxes.on('click', function () {
             self.retrievePermissionsOwnedByRole($(this).val(), this.checked);
+
+            let currentState = self.saveCheckboxStates(self.editorRoleCheckboxes, {});
+            self.editorRoleCheckboxesChanged = self.comparator.compare(self.editorRoleSavedState, currentState);
+
+            self.shouldEnableSave()
+        });
+
+        this.editorPermissionCheckboxes.on('click', function () {
+            let currentState = self.saveCheckboxStates(self.editorPermissionCheckboxes, {});
+            self.editorPermissionCheckboxesChanged = self.comparator.compare(self.editorPermissionSavedState, currentState);
+
+            self.shouldEnableSave()
         });
 
         this.saveButton.on('click', function () {
