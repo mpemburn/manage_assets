@@ -10,8 +10,10 @@ export default class UserRolesManager {
         this.selectedRoleName = null;
         this.selectedPermissionName = null;
         this.roleRows = null;
-        this.editorRoleCheckboxes = $('[data-type="role"]');
-        this.editorPermissionCheckboxes = $('[data-type="permission"]');
+        this.editorRoleCheckboxes = $('input[data-type="role"]');
+        this.editorPermissionCheckboxes = $('input[data-type="permission"]');
+        this.editorRoleSavedState = {};
+        this.editorPermissionSavedState = {};
         this.saveButton = $('#save_user_roles');
         this.apiAction = $('#modal_form').attr('action');
         this.getAssignedEnpoint = $('[name="get_assigned_endpoint"]').val();
@@ -34,6 +36,11 @@ export default class UserRolesManager {
             $(this).prop('checked', false);
             $(this).prop('disabled', '');
         });
+
+        // Blank the "state" objects
+        this.editorRoleSavedState = {};
+        this.editorPermissionSavedState = {};
+
         // Uncheck all "Permissions" checkboxes
         this.editorPermissionCheckboxes.each(function () {
             let checkbox = $(this);
@@ -124,6 +131,17 @@ export default class UserRolesManager {
         document.location.reload();
     }
 
+    saveCheckboxStates(checkboxes, stateObject) {
+        let self = this;
+
+        this.stateObject = stateObject;
+        checkboxes.each(function () {
+            let state = $(this).prop('checked');
+            // Save the state to determine whether the user has changed it
+            self.stateObject[$(this).val()] = state;
+        });
+   }
+
     setOptions(options) {
         if (options.comparator) {
             this.comparator = options.comparator;
@@ -167,6 +185,9 @@ export default class UserRolesManager {
             // and use this to check the appropriate boxes in the dialog
             self.readRowEntities(row, 'role')
             self.readRowEntities(row, 'permission')
+
+            self.saveCheckboxStates(self.editorRoleCheckboxes, self.editorRoleSavedState);
+            self.saveCheckboxStates(self.editorPermissionCheckboxes, self.editorPermissionSavedState);
 
             self.modal.toggleModal();
         });

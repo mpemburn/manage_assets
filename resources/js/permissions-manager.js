@@ -110,15 +110,6 @@ export default class PermissionsManager {
         });
 
         return this.comparator.compare(this.rolePermissionSavedState, this.currentState);
-        // let truth = [];
-        // for (let key in this.rolePermissionSavedState) {
-        //     if (this.rolePermissionSavedState.hasOwnProperty(key)) {
-        //         let savedValue = this.rolePermissionSavedState[key];
-        //         truth.push(this.currentState[key] === savedValue);
-        //     }
-        // }
-        //
-        // return ($.inArray(false, truth) !== -1);
     }
 
     resetModal() {
@@ -160,6 +151,10 @@ export default class PermissionsManager {
 
     addEventListeners() {
         let self = this;
+
+        $(document).on('modalClosed', function (evt) {
+            self.resetModal();
+        });
 
         $(document).on('modalClosed', function (evt) {
             self.resetModal();
