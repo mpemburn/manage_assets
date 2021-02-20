@@ -25,8 +25,9 @@ export default class UserRolesManager {
 
         if (options.ajax) {
             this.ajax = options.ajax;
-            this.ajax.setCaller(this);
-            this.ajax.setErrorMessage(this.errorMessage);
+            // Set "this" (i.e., UserRolesManager) to be the caller
+            this.ajax.fromCaller(this);
+            this.ajax.withErrorMessageField(this.errorMessage);
         }
 
         if (options.dtManager) {
@@ -42,6 +43,9 @@ export default class UserRolesManager {
     }
 
     resetModal() {
+        // Disable the Save button until something changes
+        this.saveButton.prop('disabled', 'disabled');
+
         // Uncheck all "Roles" checkboxes
         this.editorRoleCheckboxes.each(function () {
             $(this).prop('checked', false);
@@ -101,15 +105,16 @@ export default class UserRolesManager {
 
     // Call back end to see if this role has associated permissions
     retrievePermissionsOwnedByRole(roleName, shouldShow) {
-        this.ajax.setMethod('GET')
-            .setEndpoint(this.getAssignedEnpoint)
-            .setData('role_name=' + roleName)
-            .setExtraCallbackArg(shouldShow)
-            .setSuccessCallback(this.togglePermissionsOwnedByRole)
+        this.ajax.withMethod('GET')
+            .withEndpoint(this.getAssignedEnpoint)
+            .withData('role_name=' + roleName)
+            .addExtraArg(shouldShow)
+            .usingSuccessCallback(this.togglePermissionsOwnedByRole)
             .request();
     }
 
     togglePermissionsOwnedByRole(caller, response, shouldShow) {
+        // Caller was set in constructor via this.ajax.fromCaller(this);
         let self = caller;
 
         caller.shouldShow = shouldShow;
@@ -130,6 +135,7 @@ export default class UserRolesManager {
     }
 
     saveResponseSuccess(caller, response) {
+        // Caller was set in constructor via this.ajax.fromCaller(this);
         caller.modal.toggleModal();
 
         document.location.reload();
@@ -162,10 +168,10 @@ export default class UserRolesManager {
 
         this.saveButton.on('click', function () {
             let dataValue = self.editForm.serialize();
-            self.ajax.setMethod('POST')
-                .setEndpoint(self.apiAction)
-                .setData(dataValue)
-                .setSuccessCallback(self.saveResponseSuccess)
+            self.ajax.withMethod('POST')
+                .withEndpoint(self.apiAction)
+                .withData(dataValue)
+                .usingSuccessCallback(self.saveResponseSuccess)
                 .request();
         })
     }

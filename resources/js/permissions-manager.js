@@ -40,8 +40,9 @@ export default class PermissionsManager {
 
         if (options.ajax) {
             this.ajax = options.ajax;
-            this.ajax.setCaller(this);
-            this.ajax.setErrorMessage(this.errorMessage);
+            // Set "this" (i.e., PermissionsManager) to be the caller
+            this.ajax.fromCaller(this);
+            this.ajax.withErrorMessageField(this.errorMessage);
         }
 
         if (options.dtManager) {
@@ -76,14 +77,15 @@ export default class PermissionsManager {
         let dataValue = data || this.editForm.serialize();
         this.currentOperation = endpoint;
 
-        this.ajax.setMethod(method)
-            .setEndpoint(this.baseUrl + endpoint)
-            .setData(dataValue)
-            .setSuccessCallback(this.responseSuccess)
+        this.ajax.withMethod(method)
+            .withEndpoint(this.baseUrl + endpoint)
+            .withData(dataValue)
+            .usingSuccessCallback(this.responseSuccess)
             .request();
     }
 
     responseSuccess(caller, response) {
+        // Caller was set in constructor via this.ajax.fromCaller(this);
         if (caller.currentOperation !== 'delete') {
             caller.modal.toggleModal();
         }
@@ -92,15 +94,16 @@ export default class PermissionsManager {
     }
 
     retrievePermissionsForRole(roleName, endpoint) {
-        this.ajax.setMethod('GET')
-            .setEndpoint(this.baseUrl + endpoint)
-            .setData('role_name=' + roleName)
-            .setSuccessCallback(this.populateRolePermission)
+        this.ajax.withMethod('GET')
+            .withEndpoint(this.baseUrl + endpoint)
+            .withData('role_name=' + roleName)
+            .usingSuccessCallback(this.populateRolePermission)
             .request();
     }
 
 
     populateRolePermission(caller, response) {
+        // Caller was set in constructor via this.ajax.fromCaller(this);
         let self = caller;
 
         caller.permissions = response.permissions;
