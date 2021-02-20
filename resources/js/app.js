@@ -1,3 +1,4 @@
+import RequestAjax from "./request-ajax";
 import FileUploader from './file-uploader';
 import Modal from './modal';
 import PermissionsManager from './permissions-manager';
@@ -10,20 +11,24 @@ let $ = require('jquery');
 require('./bootstrap');
 require('alpinejs');
 
+let ajax = new RequestAjax();
 let modal = new Modal();
+let dtManager = new DatatablesManager();
+
 new FileUploader({
     modal: modal
 });
 
-let dtManager = new DatatablesManager();
 new PermissionsManager({
     modal: modal,
-    dtManager: dtManager
+    dtManager: dtManager,
+    ajax: ajax
 });
 
 new UserRolesManager({
     modal: modal,
-    dtManager: dtManager
+    dtManager: dtManager,
+    ajax: ajax
 });
 
 new Inventory({
