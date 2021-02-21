@@ -11,8 +11,8 @@
                             <div>Role Name:</div>
                             {{ Form::hidden('id', 0) }}
                             {{ Form::text('name', null, ['class' => 'form-control']) }}
-                            <div id="name_caution" class="text-red-600 font-normal hidden">
-                                CAUTION: Changing the <b>Role Name</b><br>may affect existing permissions.
+                            <div id="name_caution" class="w-2/3 text-red-600 font-normal hidden">
+                                CAUTION: Changing the <b>Role Name</b> may affect existing permissions.
                             </div>
                         </div>
                         <div class="form-group font-bold" id="permissions_for_role">
