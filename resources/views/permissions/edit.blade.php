@@ -1,5 +1,5 @@
 <div class="" style="width: 90%;">
-    <main class="container mx-auto max-w-screen-lg h-full">
+    <main class="container mx-auto max-w-screen-sm h-full">
         <!-- permission edit modal -->
         <article id="editor" aria-label="Permission Edit Modal" class="relative h-full flex flex-col bg-white shadow-xl rounded-md" >
 
