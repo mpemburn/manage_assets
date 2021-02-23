@@ -39,10 +39,13 @@
     </div>
     <div class="permission-modal">
         <!--Modal-->
-        <div class="modal opacity-0 pointer-events-none w-full h-full top-0 left-0 flex items-center justify-center">
+        <div class="permui-edit modal opacity-0 pointer-events-none w-full h-full top-0 left-0 flex items-center justify-center">
             <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
             @include('components.token-form')
             @include('permissions.edit')
+        </div>
+        <div>
+            @include('components.confirmation-dialog')
         </div>
     </div>
 
