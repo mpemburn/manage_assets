@@ -6,7 +6,8 @@
     </x-slot>
     <div id="acl_wrapper" data-context="role" class="report">
         <div class="controls">
-            <button id="edit_role" class="modal-open rounded px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
+            <button id="edit_role"
+                    class="modal-open rounded px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
                 Add Role
             </button>
         </div>
@@ -30,12 +31,14 @@
                     <td>
                         <ul>
                             @foreach($role->permissions()->pluck('name') as $permission)
-                                <li data-type="permission" data-entity-name="{!! $permission !!}" class="list-disc">{!! $permission !!}</li>
+                                <li data-type="permission" data-entity-name="{!! $permission !!}"
+                                    class="list-disc">{!! $permission !!}</li>
                             @endforeach
                         </ul>
                     </td>
                     <td class="dt-right">
-                        <button data-edit="{!! $role->id !!}" class="w-20 ml-3 rounded px-3 py-1 bg-green-300 hover:bg-green-700 hover:text-white focus:shadow-outline focus:outline-none">
+                        <button data-edit="{!! $role->id !!}"
+                                class="w-20 ml-3 rounded px-3 py-1 bg-green-300 hover:bg-green-700 hover:text-white focus:shadow-outline focus:outline-none">
                             Edit
                         </button>
                         <button data-delete="{!! $role->id !!}" data-name="{!! $role->name !!}"
@@ -57,7 +60,6 @@
         <div>
             @include('components.confirmation-dialog')
         </div>
-    </div>
     </div>
 
 </x-app-layout>
