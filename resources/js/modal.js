@@ -1,11 +1,12 @@
 export default class Modal {
-    constructor(context) {
-        this.context = context || 'modal';
-        this.openModal = $('.' + this.context + '-open');
+    constructor(modalContext) {
+        let context = modalContext || 'modal';
+        this.context = context;
+        this.openModal = $('.' + context + '-open');
         this.body = $('body');
-        this.modal = $('.' + this.context);
-        this.overlay = $('.' + this.context + '-overlay');
-        this.closeModal = $('.' + this.context + '-close');
+        this.modal = $('.' + context);
+        this.overlay = $('.' + context + '-overlay');
+        this.closeModal = $('.' + context + '-close');
 
         if (typeof (this.modal) !== 'undefined' && this.modal !== null) {
             this.addEventListeners();
@@ -16,13 +17,13 @@ export default class Modal {
         this.modal.toggleClass('opacity-0');
         this.modal.toggleClass('fixed');
         this.modal.toggleClass('pointer-events-none');
-        this.body.toggleClass(this.context + '-active');
+        this.body.toggleClass(context + '-active');
 
         // Trigger open and close events for others to see
-        if (this.body.hasClass(this.context + '-active')) {
-            $.event.trigger({ type: this.context + 'Opened'});
+        if (this.body.hasClass(context + '-active')) {
+            $.event.trigger({ type: context + 'Opened'});
         } else {
-            $.event.trigger({ type: this.context + 'Closed'});
+            $.event.trigger({ type: context + 'Closed'});
         }
     }
 

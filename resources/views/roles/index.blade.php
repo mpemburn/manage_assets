@@ -54,6 +54,10 @@
             @include('components.token-form')
             @include('roles.edit')
         </div>
+        <div>
+            @include('components.confirmation-dialog')
+        </div>
+    </div>
     </div>
 
 </x-app-layout>

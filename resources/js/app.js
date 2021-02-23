@@ -15,7 +15,7 @@ require('alpinejs');
 
 let ajax = new RequestAjax();
 let comparator = new Comparator();
-let modal = new Modal('modal');
+let modal = new Modal();
 let confirmation = new Confirmation();
 let dtManager = new DatatablesManager();
 
