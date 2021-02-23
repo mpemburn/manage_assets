@@ -4,7 +4,7 @@
             {{ __('Roles') }}
         </h2>
     </x-slot>
-    <div id="acl_wrapper" data-context="role" class="report">
+    <div id="acl_wrapper" data-context="role" class="roles-table">
         <div class="controls">
             <button id="edit_role"
                     class="modal-open rounded px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
@@ -41,8 +41,15 @@
                                 class="w-20 ml-3 rounded px-3 py-1 bg-green-300 hover:bg-green-700 hover:text-white focus:shadow-outline focus:outline-none">
                             Edit
                         </button>
+                        @php
+                            if (in_array($role->name, $protectedRoles, true)) {
+                                $disabled = 'disabled';
+                            } else {
+                                $disabled = '';
+                            }
+                        @endphp
                         <button data-delete="{!! $role->id !!}" data-name="{!! $role->name !!}"
-                                class="w-20 ml-3 rounded px-3 py-1 bg-red-300 hover:bg-red-700 hover:text-white focus:shadow-outline focus:outline-none">
+                                class="w-20 ml-3 rounded px-3 py-1 bg-red-300 hover:bg-red-700 disabled:opacity-50 hover:text-white focus:shadow-outline focus:outline-none" {!! $disabled !!}>
                             Delete
                         </button>
                     </td>

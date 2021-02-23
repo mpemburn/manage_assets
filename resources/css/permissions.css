@@ -1,0 +1,6 @@
+div.permissions-table,
+div.roles-table {
+    width: 80%;
+    margin: 2rem auto;
+    border: 1px solid lightgray
+}
