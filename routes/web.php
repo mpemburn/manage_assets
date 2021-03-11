@@ -38,7 +38,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/user_roles', AdminController::class . '@userRoles')->name('user_roles');
 
     Route::get('/test', function () {
-        DebugHelper::testPermissions();
+        DebugHelper::testEncryption();
+//        DebugHelper::testPermissions();
     });
 });
 
