@@ -26,7 +26,7 @@ class ServiceFactory extends Factory
             'description' => $this->faker->paragraph,
             'url' => $this->faker->url,
             'username' => $this->faker->email,
-            'password' => $this->faker->password,
+            'password' => $this->faker->password(8) . $this->faker->numberBetween(0, 20),
             'notes' => $this->faker->paragraph
         ];
     }

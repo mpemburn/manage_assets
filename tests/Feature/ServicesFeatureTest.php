@@ -28,7 +28,7 @@ class ServicesFeatureTest extends TestCase
             'description' => $this->faker->paragraph,
             'url' => $this->faker->url,
             'username' => $this->faker->email,
-            'password' => $this->faker->password(8),
+            'password' => $this->faker->password(8) . $this->faker->numberBetween(0, 20),
             'notes' => $this->faker->paragraph
         ];
         $response = $this->post('/api/service/create', $attributes);
@@ -45,13 +45,17 @@ class ServicesFeatureTest extends TestCase
             'description' => $this->faker->paragraph,
             'url' => $this->faker->url,
             'username' => $this->faker->email,
-            'password' => '', //$this->faker->password,
+            'password' => $this->faker->password(8) . $this->faker->numberBetween(0, 20),
             'notes' => $this->faker->paragraph
         ];
-        $response = $this->post('/api/service/create', $attributes);
 
-        $response->assertStatus(400);
+        collect(['name', 'username', 'password'])
+            ->each(function ($item) use ($attributes) {
+                $attributes[$item] = null;
+                $response = $this->post('/api/service/create', $attributes);
+                $response->assertStatus(400);
 
-        //        $this->assertDatabaseHas((new Service())->getTable(), $attributes);
+                $this->assertDatabaseMissing((new Service())->getTable(), $attributes);
+            });
     }
 }
