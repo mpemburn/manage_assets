@@ -22,7 +22,12 @@ class ServiceFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'name' => $this->faker->word,
+            'description' => $this->faker->paragraph,
+            'url' => $this->faker->url,
+            'username' => $this->faker->email,
+            'password' => $this->faker->password,
+            'notes' => $this->faker->paragraph
         ];
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ServicesController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -41,4 +42,6 @@ Route::middleware('auth:api')->group( function () {
 
     Route::post('/user_roles', UserRolesController::class . '@edit');
     Route::get('/user_roles/assigned', UserRolesController::class . '@getAssigned');
+
+    Route::post('/service/create', ServicesController::class . '@create');
 });

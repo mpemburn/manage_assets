@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class ServiceRole extends Model
 {
     use HasFactory;
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'service _id',
+        'role_id'
+    ];
+
 }

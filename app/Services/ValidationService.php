@@ -15,9 +15,9 @@ class ValidationService
         $this->errors = collect();
     }
 
-    public function handle(Request $request, array $rules): bool
+    public function handle(Request $request, array $rules, array $messages = []): bool
     {
-        $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
             $this->addError($validator->errors()->first());
 
