@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Service;
+use App\Models\ServiceSecurityQuestion;
 use Faker\Factory;
 use Faker\Generator;
 use Tests\TestCase;
@@ -94,7 +95,13 @@ class ServicesFeatureTest extends TestCase
         $response = $this->delete('/api/service/delete/' . $serviceId, $attributes);
         $response->assertStatus(400);
 
+        // Item wasn't deleted, so should still be in the database.
         $this->assertDatabaseHas((new Service())->getTable(), $attributes);
+    }
 
+    public function test_can_add_security_question(): void
+    {
+        $securityQuestion = ServiceSecurityQuestion::factory()->createOne();
+        
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Service;
 use App\Models\ServiceSecurityQuestion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,10 +20,12 @@ class ServiceSecurityQuestionFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            //
+            'service _id' => Service::factory(),
+            'question' => $this->faker->sentence,
+            'answer' => $this->faker->sentence
         ];
     }
 }
