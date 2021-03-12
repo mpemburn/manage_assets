@@ -44,4 +44,5 @@ Route::middleware('auth:api')->group( function () {
     Route::get('/user_roles/assigned', UserRolesController::class . '@getAssigned');
 
     Route::post('/service/create', ServicesController::class . '@create');
+    Route::put('/service/update/{id}', ServicesController::class . '@update');
 });
