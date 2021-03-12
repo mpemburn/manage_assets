@@ -21,8 +21,13 @@ class ServicesController extends Controller
         return $this->crudService->create($request);
     }
 
-    public function update(Request $request): JsonResponse
+    public function update(Request $request, int $serviceId): JsonResponse
     {
-        return $this->crudService->update($request);
+        return $this->crudService->update($request, $serviceId);
+    }
+
+    public function delete(Request $request, int $serviceId): JsonResponse
+    {
+        return $this->crudService->delete($request, $serviceId);
     }
 }

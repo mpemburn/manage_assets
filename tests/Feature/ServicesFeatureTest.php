@@ -71,4 +71,30 @@ class ServicesFeatureTest extends TestCase
             $this->assertDatabaseHas((new Service())->getTable(), $attributes);
         });
     }
+
+    public function test_user_can_delete_service(): void
+    {
+        $service = Service::factory()->createOne();
+        $attributes = $service->getAttributes();
+        $serviceId = $attributes['id'];
+
+        $response = $this->delete('/api/service/delete/' . $serviceId, $attributes);
+        $response->assertStatus(200);
+
+        $this->assertDatabaseMissing((new Service())->getTable(), $attributes);
+    }
+
+    public function test_fail_to_delete_service(): void
+    {
+        $service = Service::factory()->createOne();
+        $attributes = $service->getAttributes();
+        // Change the id to a fairly impossible value
+        $serviceId = 999999999999;
+
+        $response = $this->delete('/api/service/delete/' . $serviceId, $attributes);
+        $response->assertStatus(400);
+
+        $this->assertDatabaseHas((new Service())->getTable(), $attributes);
+
+    }
 }
