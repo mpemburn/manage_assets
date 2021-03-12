@@ -23,14 +23,8 @@ class ServicesFeatureTest extends TestCase
 
     public function test_user_can_create_new_service(): void
     {
-        $attributes = [
-            'name' => $this->faker->word,
-            'description' => $this->faker->paragraph,
-            'url' => $this->faker->url,
-            'username' => $this->faker->email,
-            'password' => $this->faker->password(8) . $this->faker->numberBetween(0, 20),
-            'notes' => $this->faker->paragraph
-        ];
+        $attributes = Service::factory()->make()->getAttributes();
+
         $response = $this->post('/api/service/create', $attributes);
 
         $response->assertStatus(200);
@@ -40,14 +34,7 @@ class ServicesFeatureTest extends TestCase
 
     public function test_create_service_fails_on_missing_data(): void
     {
-        $attributes = [
-            'name' => $this->faker->word,
-            'description' => $this->faker->paragraph,
-            'url' => $this->faker->url,
-            'username' => $this->faker->email,
-            'password' => $this->faker->password(8) . $this->faker->numberBetween(0, 20),
-            'notes' => $this->faker->paragraph
-        ];
+        $attributes = Service::factory()->make()->getAttributes();
 
         collect(['name', 'username', 'password'])
             ->each(function ($item) use ($attributes) {
