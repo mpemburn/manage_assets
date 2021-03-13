@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Service;
+use App\Models\ServiceRole;
 use App\Models\ServiceSecurityQuestion;
 use Faker\Factory;
 use Faker\Generator;
@@ -61,7 +62,7 @@ class ServicesFeatureTest extends TestCase
             'description' => $this->faker->paragraph,
             'url' => $this->faker->url,
             'username' => $this->faker->email,
-            'password' => $this->faker->password(8) . $this->faker->numberBetween(0, 20),
+            'password' => $this->faker->regexify('[A-Z]{2}[a-z]{6}[0-9]{2}'),
             'notes' => $this->faker->paragraph
         ])->each(function ($value, $key) use ($attributes, $serviceId) {
             // Change the value of the field
@@ -99,9 +100,17 @@ class ServicesFeatureTest extends TestCase
         $this->assertDatabaseHas((new Service())->getTable(), $attributes);
     }
 
-    public function test_can_add_security_question(): void
+    public function test_can_add_service_security_question(): void
     {
         $securityQuestion = ServiceSecurityQuestion::factory()->createOne();
-        
+        $attributes = $securityQuestion->getAttributes();
+        $this->assertDatabaseHas((new ServiceSecurityQuestion())->getTable(), $attributes);
+    }
+
+    public function test_can_add_service_role(): void
+    {
+        $serviceRole = ServiceRole::factory()->createOne();
+        $attributes = $serviceRole->getAttributes();
+        $this->assertDatabaseHas((new ServiceRole())->getTable(), $attributes);
     }
 }

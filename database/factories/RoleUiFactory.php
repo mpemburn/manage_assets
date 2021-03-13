@@ -2,12 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\Model;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Role;
 
-class RoleFactory extends Factory
+class RoleUiFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.

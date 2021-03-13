@@ -12,7 +12,7 @@ class ServiceRole extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'service _id',
+        'service_id',
         'role_id'
     ];
 
