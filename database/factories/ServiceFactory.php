@@ -26,8 +26,7 @@ class ServiceFactory extends Factory
             'description' => $this->faker->paragraph,
             'url' => $this->faker->url,
             'username' => $this->faker->email,
-            // Generate 10 character password with upper and lower case plus number
-            'password' => $this->faker->regexify('[A-Z]{2}[a-z]{6}[0-9]{2}'),
+            'password' => $this->faker->password(8),
             'notes' => $this->faker->paragraph
         ];
     }

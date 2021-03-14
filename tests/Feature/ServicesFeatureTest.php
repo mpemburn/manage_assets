@@ -62,7 +62,7 @@ class ServicesFeatureTest extends TestCase
             'description' => $this->faker->paragraph,
             'url' => $this->faker->url,
             'username' => $this->faker->email,
-            'password' => $this->faker->regexify('[A-Z]{2}[a-z]{6}[0-9]{2}'),
+            'password' => $this->faker->password(8),
             'notes' => $this->faker->paragraph
         ])->each(function ($value, $key) use ($attributes, $serviceId) {
             // Change the value of the field

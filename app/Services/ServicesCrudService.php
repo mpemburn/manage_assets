@@ -16,7 +16,7 @@ class ServicesCrudService
 
     protected const USERNAME_PASSWORD_VALIDATIONS = [
         'username' => ['required', 'email'],
-        'password' => ['required', 'min:8', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/'],
+        'password' => ['required', 'min:8'],
     ];
 
     protected ValidationService $validator;
