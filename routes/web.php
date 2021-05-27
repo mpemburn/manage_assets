@@ -33,10 +33,6 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/inventory', InventoryController::class . '@index')->name('inventory');
 
-    Route::get('/roles', AdminController::class . '@roles')->name('roles');
-    Route::get('/permissions', AdminController::class . '@permissions')->name('permissions');
-    Route::get('/user_roles', AdminController::class . '@userRoles')->name('user_roles');
-
     Route::get('/test', function () {
         DebugHelper::testEncryption();
 //        DebugHelper::testPermissions();

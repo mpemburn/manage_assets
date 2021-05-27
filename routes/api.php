@@ -28,21 +28,6 @@ Route::post('/login', AuthController::class . '@login')->name('login');
 Route::get('/store', ReportController::class . '@storeReport');
 
 Route::middleware('auth:api')->group( function () {
-    Route::post('/roles/create', RolesController::class . '@create');
-    Route::post('/receive_files', ReportController::class . '@receive')->name('receive');
-    Route::post('/receive_inventory', InventoryController::class . '@receive');
-
-    Route::put('/roles/update', RolesController::class . '@update');
-    Route::delete('/roles/delete', RolesController::class . '@delete');
-    Route::get('/roles/permissions', RolesController::class . '@getPermissions');
-
-    Route::post('/permissions/create', PermissionsController::class . '@create');
-    Route::put('/permissions/update', PermissionsController::class . '@update');
-    Route::delete('/permissions/delete', PermissionsController::class . '@delete');
-
-    Route::post('/user_roles', UserRolesController::class . '@edit');
-    Route::get('/user_roles/assigned', UserRolesController::class . '@getAssigned');
-
     Route::post('/service/create', ServicesController::class . '@create');
     Route::put('/service/update/{id}', ServicesController::class . '@update');
     Route::delete('/service/delete/{id}', ServicesController::class . '@delete');
